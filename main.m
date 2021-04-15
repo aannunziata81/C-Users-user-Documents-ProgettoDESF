@@ -14,4 +14,4 @@ PloadL = [15 15 15 14 14 14 8 7 7 7 7 7 7 7  7 7 7 7 7 7 8 12.5 13 13]; %KW
 p(1:24) = 0;
 
 figure(1)
-plot(ore, Pload, ore, p)
+plot(ore, PloadL, ore, PloadI)
