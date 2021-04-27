@@ -122,8 +122,19 @@ SOCinit = 50 / 100 * Capacita_Batteria; % percento
 % F1, F2, F3
 % Vendita e Acquisto
 prezzo_vendita_energia_elettrica = 0.04018;
-
-
+file_fasce_orarie = load('fasceorarie');
+fasce_orarie_gennaio = file_fasce_orarie.fasceorariegennaio;
+fasce_orarie_febbraio = file_fasce_orarie.fasceorariefebbraio;
+fasce_orarie_marzo = file_fasce_orarie.fasceorariemarzo;
+fasce_orarie_aprile = file_fasce_orarie.fasceorarieaprile;
+fasce_orarie_maggio = file_fasce_orarie.fasceorariemaggio;
+fasce_orarie_giugno = file_fasce_orarie.fasceorariegiugno;
+fasce_orarie_luglio = file_fasce_orarie.fasceorarieluglio;
+fasce_orarie_agosto = file_fasce_orarie.fasceorarieagosto;
+fasce_orarie_settembre = file_fasce_orarie.fasceorariesettembre;
+fasce_orarie_ottobre = file_fasce_orarie.fasceorarieottobre;
+fasce_orarie_novembre = file_fasce_orarie.fasceorarienovembre;
+fasce_orarie_dicembre = file_fasce_orarie.fasceorariedicembre;
 
 %----------------------Inverter------------------------
 % Rappresentazione qualitativa della caratteristica dell'inverter
