@@ -149,3 +149,33 @@ end
 
 figure(1)
 plot(potenza_rapporto, eta_inverter)
+
+
+%%---------------------------Optimization Algorithm---------------
+% Problem Definition
+
+problem.ObjectiveFunction = @(x) MyFitnessFunction(x);
+problem.nVar = 2;
+problem.VarMin = [1 1];
+problem.VarMax = [inf inf];
+
+% GA Parameters
+params.MaxIt = 100;
+params.nPop = 20;
+
+%params.beta = 1;
+params.pC = 1;
+params.mu = 0.02;
+params.sigma = 0.1;
+params.gamma = 0.1;
+
+% Run GA
+out = RunGA(problem, params);
+
+% Results
+%figure;
+%plot(out.bestcost, 'LineWidth', 2);
+%semilog(out.bestcost, 'LineWidth', 2);
+%xlabel('Iterations');
+%ylabel('Best Cost');
+%grid on;
