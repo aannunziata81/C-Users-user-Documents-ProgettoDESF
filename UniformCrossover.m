@@ -5,5 +5,6 @@ function [y1, y2] = UniformCrossover(x1, x2, gamma)
     
     y1 = alpha.*x1 + (1-alpha).*x2;
     y2 = alpha.*x2 + (1-alpha).*x1;
-
+    y1 = round(y1);
+    y2 = round(y2);
 end

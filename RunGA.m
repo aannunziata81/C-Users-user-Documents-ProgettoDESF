@@ -4,6 +4,7 @@ function out = RunGA(problem, params)
     nVar = problem.nVar;
     VarMin = problem.VarMin;
     VarMax = problem.VarMax;
+    
     VarSize = [1, nVar];
     % Params
     MaxIt = params.MaxIt;
@@ -26,8 +27,14 @@ function out = RunGA(problem, params)
     pop = repmat(empty_individual, nPop, 1);
     for i = 1:nPop
         
+        %unifrnd(problem.VarMin, problem.VarMax, VarSize)
         % Generate Random Solution
-        pop(i).Position = unifrnd(VarMin, VarMax, VarSize);   
+        pop(i).Position = unifrnd(VarMin, VarMax, VarSize);
+        
+        %randi([VarMin VarMax], 1);   
+        %pop(i).Position(2) = randi([1 25], 1);
+        %pop(i).Position = round(pop(i).Position)
+        
         
         % Evaluate Solution
         pop(i).Cost = ObjectiveFunction(pop(i).Position);
@@ -79,11 +86,11 @@ function out = RunGA(problem, params)
             popc(l).Position = Mutate(popc(l).Position, mu, sigma);
             
             % Check for Variable Buonds
-            popc(l).Position = max(popc(1).Position, varMin)
-            popc(l).Position = min(popc(1).Position, varMax)
+            popc(l).Position = max(popc(1).Position, VarMin);
+            popc(l).Position = min(popc(1).Position, VarMax);
             
             % Evaluation
-            popc(l).Cost = CostFunction(popc(l).Position);
+            popc(l).Cost = ObjectiveFunction(popc(l).Position);
             
             % Compare Solution to Best Solution Ever Found
             if popc(l).Cost < bestsol.Cost
@@ -109,7 +116,9 @@ function out = RunGA(problem, params)
     
     % Results
     out.pop = pop;
+    bestsol.Position = round(bestsol.Position);
     out.bestsol = bestsol;
+    %out.bestsol = round(bestsol.Position);
     out.bestcost = bestcost;
-    
+    disp(bestsol);
 end

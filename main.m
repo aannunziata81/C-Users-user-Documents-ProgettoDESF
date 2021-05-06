@@ -79,7 +79,7 @@ num_PV = profilo_carico_anno2020 / (soleggiamento_anno2020 * K);
 
 
 % previsione area: circa 7000 m^2
-superfice_pannello = 900 * (2.384 * 1.303);
+superfice_pannello = 2.384 * 1.303;
 efficienza_pannello = 0.216;
 
 % Potenza generata da un pannello fotovoltaico,  
@@ -100,20 +100,20 @@ Potenza_PV_dicembre_2020 = sol_dicembre_2020(:, :) * superfice_pannello * effici
 %------------------------Batteria----------------------
 % Batteria - PowerWall 2 - Tesla da 14 KWh - Costo € 6.000,00
 % Scarica e carica batteria 5 KWh, per 10 secondi 7 KWh
-% Round trip efficiency 90 %, energia prelevabile in un ora
+% Round trip efficiency 90 %, energia prelevabile in un'ora
 carica_scarica_ora = 5;      % KWh
 Round_trip_efficiency = 0.9;
-Numero_batterie = 15;
-Capacita_Batteria = 14 * Numero_batterie;      %KWh
+%Numero_batterie = 15;
+Capacita_Batteria = 14;      %KWh
 
 
 % Range di mantenimento dello stato di carica
 % SOC - stato di carica
-SOCmax = 90 / 100 * Capacita_Batteria; % percento
-SOCmin = 20 / 100 * Capacita_Batteria; % percento
+SOCmax = 90 / 100 * Capacita_Batteria; %KWh
+SOCmin = 20 / 100 * Capacita_Batteria; %KWh
 
 % SOC iniziale
-SOCinit = 50 / 100 * Capacita_Batteria; % percento
+SOCinit = 50 / 100 * Capacita_Batteria; %KWh
 
 
 
@@ -147,23 +147,32 @@ for i = 1 : campioni
     potenza_rapporto(i) = i / campioni;
 end
 
-figure(1)
-plot(potenza_rapporto, eta_inverter)
+%figure(1)
+%plot(potenza_rapporto, eta_inverter)
 
+%%-----------------------Parameters----------------------
+global Ppv Pload Cbatt SOC_min SOC_max SOC_init
+Ppv = Potenza_PV_maggio_2020(1, :)./ 1000;
+Pload = profilo_maggio_2020(1, :);
+Cbatt = 14;
+SOC_min = SOCmin;
+SOC_max = SOCmax;
+SOC_init = SOCinit;
 
-%%---------------------------Optimization Algorithm---------------
+%%---------------------------Optimization Algorithm------
+
 % Problem Definition
 
 problem.ObjectiveFunction = @(x) MyFitnessFunction(x);
 problem.nVar = 2;
-problem.VarMin = [1 1];
-problem.VarMax = [inf inf];
+problem.VarMin = [1  1];
+problem.VarMax = [5000 200];
 
 % GA Parameters
-params.MaxIt = 100;
-params.nPop = 20;
+params.MaxIt = 1000;
+params.nPop = 100;
 
-%params.beta = 1;
+params.beta = 1;
 params.pC = 1;
 params.mu = 0.02;
 params.sigma = 0.1;
