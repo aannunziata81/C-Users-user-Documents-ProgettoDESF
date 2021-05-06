@@ -12,7 +12,7 @@ function d = MyFitnessFunction(x)
     NVV = 1;
     for i=1:length(Erogazione)
         if Erogazione(i)>0 
-              if ((SOC / delta_t) - Erogazione(i))>=SOC_min 
+              if ((SOC / delta_t) - Erogazione(i)) >= SOC_min 
                   SOC = (SOC / delta_t) - (Erogazione(i)*delta_t);
               else 
                   SOC = (SOC / delta_t) - (Erogazione(i)*delta_t);
