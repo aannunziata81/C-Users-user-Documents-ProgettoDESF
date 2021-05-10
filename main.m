@@ -151,14 +151,15 @@ end
 %plot(potenza_rapporto, eta_inverter)
 
 %%-----------------------Parameters----------------------
-global Ppv Pload Cbatt SOC_min SOC_max SOC_init
-Ppv = Potenza_PV_maggio_2020(1, :)./ 1000;
-Pload = profilo_maggio_2020(1, :);
-Cbatt = 14;
+global P_pv P_load SOC_min SOC_max SOC_init Round_trip carica_scarica 
+P_pv = Potenza_PV_maggio_2020(1, :)./ 1000;
+P_load = profilo_maggio_2020(1, :);
+fasce = fasce_orarie_maggio(1, :);
 SOC_min = SOCmin;
 SOC_max = SOCmax;
 SOC_init = SOCinit;
-
+Round_trip = Round_trip_efficiency;
+carica_scarica = carica_scarica_ora;
 %%---------------------------Optimization Algorithm------
 
 % Problem Definition
@@ -169,7 +170,7 @@ problem.VarMin = [1  1];
 problem.VarMax = [5000 200];
 
 % GA Parameters
-params.MaxIt = 1000;
+params.MaxIt = 500;
 params.nPop = 100;
 
 params.beta = 1;

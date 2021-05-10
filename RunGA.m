@@ -106,7 +106,7 @@ function out = RunGA(problem, params)
         pop = pop(1:nPop);
         
         % Update Best Cost of Iteration
-        bestcost(it) = bestsol.Cost;
+        bestcost(it) = round(bestsol.Cost);
 
         % Display Itertion Information
         disp(['Iteration ' num2str(it) ': Best Cost = ' num2str(bestcost(it))]);
@@ -117,8 +117,8 @@ function out = RunGA(problem, params)
     % Results
     out.pop = pop;
     bestsol.Position = round(bestsol.Position);
+    bestsol.Cost = round(bestsol.Cost);
     out.bestsol = bestsol;
-    %out.bestsol = round(bestsol.Position);
     out.bestcost = bestcost;
     disp(bestsol);
 end
