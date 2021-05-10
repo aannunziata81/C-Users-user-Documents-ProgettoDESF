@@ -30,7 +30,7 @@ function out = RunGA(problem, params)
         %unifrnd(problem.VarMin, problem.VarMax, VarSize)
         % Generate Random Solution
         pop(i).Position = unifrnd(VarMin, VarMax, VarSize);
-        
+        disp(int2str(pop(i).Position))
         %randi([VarMin VarMax], 1);   
         %pop(i).Position(2) = randi([1 25], 1);
         %pop(i).Position = round(pop(i).Position)
