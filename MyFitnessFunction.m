@@ -10,7 +10,7 @@ function d = MyFitnessFunction(x)
     charge = capacita_batteria * x(2);
     charge_max = charge * 0.8;
     charge_min = charge * 0.2;
-    charge_init = charge * 0.5;
+    charge_init = charge * 0.5; 
     
 %     for i=1:length(Erogazione)
 %         if Erogazione(i)>0
@@ -44,6 +44,7 @@ function d = MyFitnessFunction(x)
         if Erogazione(i)>0 
               if (charge_var - (Erogazione(i)*delta_t) )>= charge_min 
                   charge_var = charge_var  - (Erogazione(i)*delta_t);
+                  %prendo dalla batteria
               else 
                   charge_var = charge_var - (Erogazione(i)*delta_t);
                   NVV = NVV + 1;

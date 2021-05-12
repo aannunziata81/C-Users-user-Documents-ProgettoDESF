@@ -19,29 +19,36 @@ function out = RunGA(problem, params)
     % Template for Empty Individuals
     empty_individual.Position = [];
     empty_individual.Cost = [];
+    empty_individual.NVV = [];
     
     % Best Solution Ever Found
     bestsol.Cost = inf;
-    
+    bestNVV = inf;
     % Initialization
     pop = repmat(empty_individual, nPop, 1);
-    for i = 1:nPop
+    for i = 1 : nPop
         
-        %unifrnd(problem.VarMin, problem.VarMax, VarSize)
+
         % Generate Random Solution
-        pop(i).Position = unifrnd(VarMin, VarMax, VarSize);
-        disp(int2str(pop(i).Position))
-        %randi([VarMin VarMax], 1);   
-        %pop(i).Position(2) = randi([1 25], 1);
-        %pop(i).Position = round(pop(i).Position)
+%         pop(i).Position = unifrnd(VarMin, VarMax, VarSize);
+
+        pop(i).Position(1) = randi([VarMin(1) VarMax(1)], 1);
+        pop(i).Position(2) = randi([VarMin(2) VarMax(2)], 1);
         
+        % NVV - vincoli violati
+        pop(i).NVV = MyFitnessFunctionS(pop(i).Position(1), pop(i).Position(2));
         
         % Evaluate Solution
-        pop(i).Cost = ObjectiveFunction(pop(i).Position);
-        
+        pop(i).Cost = round(ObjectiveFunction(pop(i).Position));
+        % NVV da evidenziare
+        NVV_temp = pop(i).NVV;
         % Compare Solution to Best Solution Ever Found
-        if pop(i).Cost < bestsol.Cost
-            bestsol = pop(i);
+        if NVV_temp <= bestNVV
+            bestNVV = NVV_temp;
+            if pop(i).Cost < bestsol.Cost
+                    bestsol = pop(i);
+            end
+            
         end
         
     end
@@ -83,19 +90,31 @@ function out = RunGA(problem, params)
         for l = 1:nC
             
             % Perform Mutation
-            popc(l).Position = Mutate(popc(l).Position, mu, sigma);
-            
-            % Check for Variable Buonds
+            popc(l).Position = round(Mutate(popc(l).Position, mu, sigma));
+            % Check for Variable Bounds
             popc(l).Position = max(popc(1).Position, VarMin);
             popc(l).Position = min(popc(1).Position, VarMax);
             
+            % NVV
+            popc(l).NVV = MyFitnessFunctionS(popc(l).Position(1), popc(l).Position(2));
+            
             % Evaluation
-            popc(l).Cost = ObjectiveFunction(popc(l).Position);
+            popc(l).Cost = round(ObjectiveFunction(popc(l).Position));
+            
+            NVV_temp = popc(i).NVV;
             
             % Compare Solution to Best Solution Ever Found
-            if popc(l).Cost < bestsol.Cost
-                bestsol = popc(l);
+%             if (popc(l).Cost < bestsol.Cost & NVV_temp < 20 )
+%                 bestsol = popc(l);
+%             end
+            if NVV_temp <= bestNVV 
+                bestNVV = NVV_temp;
+                
+                if popc(l).Cost < bestsol.Cost
+                    bestsol = popc(l);
+                end
             end
+                
             
         end
         
@@ -106,7 +125,7 @@ function out = RunGA(problem, params)
         pop = pop(1:nPop);
         
         % Update Best Cost of Iteration
-        bestcost(it) = round(bestsol.Cost);
+        bestcost(it) = bestsol.Cost;
 
         % Display Itertion Information
         disp(['Iteration ' num2str(it) ': Best Cost = ' num2str(bestcost(it))]);
@@ -116,8 +135,8 @@ function out = RunGA(problem, params)
     
     % Results
     out.pop = pop;
-    bestsol.Position = round(bestsol.Position);
-    bestsol.Cost = round(bestsol.Cost);
+    %bestsol.Position = round(bestsol.Position);
+    %bestsol.Cost = round(bestsol.Cost);
     out.bestsol = bestsol;
     out.bestcost = bestcost;
     disp(bestsol);

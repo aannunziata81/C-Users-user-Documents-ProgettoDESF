@@ -43,18 +43,21 @@ function d = MyFitnessFunctionS(x1, x2)
     for i=1:length(Erogazione)
         if Erogazione(i)>0 
               if (charge_var - (Erogazione(i)*delta_t) )>= charge_min 
+                  %si può prendere dalla batteria
                   charge_var = charge_var  - (Erogazione(i)*delta_t);
               else 
                   charge_var = charge_var - (Erogazione(i)*delta_t);
+                  %prendi dalla batteria ma si supera il limite
                   NVV = NVV + 1;
               end
         elseif Erogazione(i)<0
               if (charge_var - (Erogazione(i)*delta_t)) <= charge_max
+                  %carica la batteria se può essere caricata
                   charge_var = charge_var - (Erogazione(i)*delta_t);
                   
               else
                   charge_var = charge_var - (Erogazione(i)*delta_t);
-                  NVV = NVV + 1;
+                  NVV = NVV + 1; %limite max violato
               end
         else
         end
