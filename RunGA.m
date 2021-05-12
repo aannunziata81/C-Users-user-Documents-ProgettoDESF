@@ -40,6 +40,8 @@ function out = RunGA(problem, params)
         
         % Evaluate Solution
         pop(i).Cost = round(ObjectiveFunction(pop(i).Position));
+        disp("primi individui " + num2str(pop(i).Position(1)) + ' | ' + num2str(pop(i).Position(2) ))
+        
         % NVV da evidenziare
         NVV_temp = pop(i).NVV;
         % Compare Solution to Best Solution Ever Found
@@ -52,6 +54,7 @@ function out = RunGA(problem, params)
         end
         
     end
+    
     
     % Best Cost of Iterations
     bestcost = nan(MaxIt, 1);
@@ -80,28 +83,34 @@ function out = RunGA(problem, params)
             % Perform Crossover
             [popc(k, 1).Position, popc(k, 2).Position] = ...
                 UniformCrossover(p1.Position, p2.Position, gamma);
-            
+            disp("crossover " + num2str(popc(k, 1).Position(1)) + ' | ' + num2str(popc(k, 1).Position(2) ))
+
         end
         
         % Convert popc to Single-Column Matrix
         popc = popc(:);
-        
+
         % Mutation
-        for l = 1:nC
+        for m = 1:nC
             
             % Perform Mutation
-            popc(l).Position = round(Mutate(popc(l).Position, mu, sigma));
-            % Check for Variable Bounds
-            popc(l).Position = max(popc(1).Position, VarMin);
-            popc(l).Position = min(popc(1).Position, VarMax);
+            popc(m).Position = round(Mutate(popc(m).Position, mu, sigma));
+            % Check for Varialme Bounds
+            popc(m).Position = max(popc(m).Position, VarMin);
+            popc(m).Position = min(popc(m).Position, VarMax);
             
+            disp("mutate " + num2str(popc(m).Position(1)) + ' | ' + num2str(popc(m).Position(2)))
             % NVV
-            popc(l).NVV = MyFitnessFunctionS(popc(l).Position(1), popc(l).Position(2));
+            popc(m).NVV = MyFitnessFunctionS(popc(m).Position(1), popc(m).Position(2));
             
             % Evaluation
-            popc(l).Cost = round(ObjectiveFunction(popc(l).Position));
+            popc(m).Cost = round(ObjectiveFunction(popc(m).Position));
             
             NVV_temp = popc(i).NVV;
+            
+            
+            
+            %disp('mutate ' + num2str(popc(m).Position))
             
             % Compare Solution to Best Solution Ever Found
 %             if (popc(l).Cost < bestsol.Cost & NVV_temp < 20 )
@@ -110,8 +119,8 @@ function out = RunGA(problem, params)
             if NVV_temp <= bestNVV 
                 bestNVV = NVV_temp;
                 
-                if popc(l).Cost < bestsol.Cost
-                    bestsol = popc(l);
+                if popc(m).Cost < bestsol.Cost
+                    bestsol = popc(m);
                 end
             end
                 
@@ -128,7 +137,7 @@ function out = RunGA(problem, params)
         bestcost(it) = bestsol.Cost;
 
         % Display Itertion Information
-        disp(['Iteration ' num2str(it) ': Best Cost = ' num2str(bestcost(it))]);
+        disp(['Iteration ' num2str(it) ': Best Cost = ' num2str(bestcost(it)) ' - ' num2str(bestsol.Position(1)) ' | ' num2str(bestsol.Position(2))]);
         
     end
     

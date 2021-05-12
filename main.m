@@ -167,12 +167,12 @@ Cap_batteria = Capacita_Batteria;
 problem.ObjectiveFunction = @(x) MyFitnessFunction(x);
 problem.nVar = 2;
 problem.VarMin = [1  1];
-problem.VarMax = [3797 386];
+problem.VarMax = [10000 500];
 
 
 % GA Parameters
-params.MaxIt = 50000;
-params.nPop = 300;
+params.MaxIt = 10;
+params.nPop = 100;
 
 params.beta = 1;
 params.pC = 1;

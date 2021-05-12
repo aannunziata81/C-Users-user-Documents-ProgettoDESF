@@ -63,7 +63,9 @@ function d = MyFitnessFunctionS(x1, x2)
         end
         
     end
-    
+    if charge_var ~= charge_init
+        NVV = NVV + 1;
+    end
     d = NVV;
     
 end

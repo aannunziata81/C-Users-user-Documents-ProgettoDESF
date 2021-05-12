@@ -1,10 +1,10 @@
 function d = MyFitnessFunction(x)
     [P_load, P_pv, capacita_batteria, Round_trip_efficiency, carica_scarica_ora] = parameter_pass();
     
-    Erogazione = P_load - P_pv * x(1);
+%     Erogazione = P_load - P_pv * x(1);
     %erogazione negativa: carico batteria
     %erogazione positiva: prende dalla batteria
-    P_batt = zeros(1,24);
+%     P_batt = zeros(1,24);
     delta_t = 1;
     NVV = 1;
     charge = capacita_batteria * x(2);
@@ -39,25 +39,37 @@ function d = MyFitnessFunction(x)
 %             
 %         end
 %     end
+    E_load = P_load * delta_t;
+    E_pv = P_pv * x(1) * delta_t;
+    
     charge_var = charge_init;
-    for i=1:length(Erogazione)
-        if Erogazione(i)>0 
-              if (charge_var - (Erogazione(i)*delta_t) )>= charge_min 
-                  charge_var = charge_var  - (Erogazione(i)*delta_t);
+    for i=1:length(E_load)
+        
+        
+        if (E_load(i) - E_pv(i)) > 0 
+            Energy = E_load(i) - E_pv(i);
+              if (charge_var - Energy) >= charge_min 
+                  charge_var = charge_var  - Energy;
+                  E_bat(i) = Energy;
                   %prendo dalla batteria
               else 
-                  charge_var = charge_var - (Erogazione(i)*delta_t);
+                  charge_var = charge_var - Energy;
+                  E_bat(i) = Energy;
                   NVV = NVV + 1;
               end
-        elseif Erogazione(i)<0
-              if (charge_var - (Erogazione(i)*delta_t)) <= charge_max
-                  charge_var = charge_var - (Erogazione(i)*delta_t);
+        elseif (E_load(i) - E_pv(i)) < 0
+              Energy = E_load(i) - E_pv(i);
+              if (charge_var - Energy) <= charge_max
+                  charge_var = charge_var - Energy;
+                  E_bat(i) = Energy;
                   
               else
-                  charge_var = charge_var - (Erogazione(i)*delta_t);
+                  charge_var = charge_var - Energy;
+                  E_bat(i) = Energy;
                   NVV = NVV + 1;
               end
         else
+            E_bat(i) = 0;
         end
         
     end
@@ -71,7 +83,7 @@ function d = MyFitnessFunction(x)
     %delta_p = (P_pv * x(1) + P_batt * x(2) + Residuo ) - P_load;
     %disp(int2str(NVV));
     %disp(int2str(NVV)  + "| " + int2str(x(1)) + " f " + int2str(x(2)))
-    delta_p = (P_pv * x(1) + capacita_batteria * x(2)) - P_load;
-    d = sqrt(sum(delta_p.^2))*NVV;
+    delta_E = (E_pv + E_bat) - E_load;
+    d = sqrt(sum(delta_E.^2)) * NVV;
     
 end
