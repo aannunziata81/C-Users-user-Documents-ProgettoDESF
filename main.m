@@ -171,7 +171,7 @@ problem.VarMax = [10000 500];
 
 
 % GA Parameters
-params.MaxIt = 10;
+params.MaxIt = 200;
 params.nPop = 100;
 
 params.beta = 1;
@@ -184,12 +184,13 @@ params.gamma = 0.1;
 out = RunGA(problem, params);
 
 % Results
-%figure;
+figure;
 %plot(out.bestcost, 'LineWidth', 2);
-%semilog(out.bestcost, 'LineWidth', 2);
-%xlabel('Iterations');
-%ylabel('Best Cost');
-%grid on;
+%semilogy(out.bestcost, 'LineWidth', 2);
+semilogy(out.bestcost, '*');
+xlabel('Iterations');
+ylabel('Best Cost');
+grid on;
 
 
 

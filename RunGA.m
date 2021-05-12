@@ -40,7 +40,7 @@ function out = RunGA(problem, params)
         
         % Evaluate Solution
         pop(i).Cost = round(ObjectiveFunction(pop(i).Position));
-        disp("primi individui " + num2str(pop(i).Position(1)) + ' | ' + num2str(pop(i).Position(2) ))
+        %disp("primi individui " + num2str(pop(i).Position(1)) + ' | ' + num2str(pop(i).Position(2) ))
         
         % NVV da evidenziare
         NVV_temp = pop(i).NVV;
@@ -83,7 +83,7 @@ function out = RunGA(problem, params)
             % Perform Crossover
             [popc(k, 1).Position, popc(k, 2).Position] = ...
                 UniformCrossover(p1.Position, p2.Position, gamma);
-            disp("crossover " + num2str(popc(k, 1).Position(1)) + ' | ' + num2str(popc(k, 1).Position(2) ))
+            %disp("crossover " + num2str(popc(k, 1).Position(1)) + ' | ' + num2str(popc(k, 1).Position(2) ))
 
         end
         
@@ -99,13 +99,13 @@ function out = RunGA(problem, params)
             popc(m).Position = max(popc(m).Position, VarMin);
             popc(m).Position = min(popc(m).Position, VarMax);
             
-            disp("mutate " + num2str(popc(m).Position(1)) + ' | ' + num2str(popc(m).Position(2)))
+            %disp("mutate " + num2str(popc(m).Position(1)) + ' | ' + num2str(popc(m).Position(2)))
             % NVV
             popc(m).NVV = MyFitnessFunctionS(popc(m).Position(1), popc(m).Position(2));
             
             % Evaluation
             popc(m).Cost = round(ObjectiveFunction(popc(m).Position));
-            
+            %disp("costo: " + int2str(popc(m).Cost))
             NVV_temp = popc(i).NVV;
             
             

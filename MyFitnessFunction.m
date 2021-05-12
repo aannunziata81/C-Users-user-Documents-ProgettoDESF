@@ -49,23 +49,23 @@ function d = MyFitnessFunction(x)
         if (E_load(i) - E_pv(i)) > 0 
             Energy = E_load(i) - E_pv(i);
               if (charge_var - Energy) >= charge_min 
-                  charge_var = charge_var  - Energy;
-                  E_bat(i) = Energy;
+                  charge_var = charge_var - Energy;
+                  E_bat(i) = -carica_scarica_ora * x(2) * Round_trip_efficiency;
                   %prendo dalla batteria
               else 
                   charge_var = charge_var - Energy;
-                  E_bat(i) = Energy;
+                  E_bat(i) = -carica_scarica_ora * x(2) * Round_trip_efficiency;
                   NVV = NVV + 1;
               end
         elseif (E_load(i) - E_pv(i)) < 0
               Energy = E_load(i) - E_pv(i);
               if (charge_var - Energy) <= charge_max
                   charge_var = charge_var - Energy;
-                  E_bat(i) = Energy;
+                  E_bat(i) = carica_scarica_ora * x(2);
                   
               else
                   charge_var = charge_var - Energy;
-                  E_bat(i) = Energy;
+                  E_bat(i) = carica_scarica_ora * x(2);
                   NVV = NVV + 1;
               end
         else
