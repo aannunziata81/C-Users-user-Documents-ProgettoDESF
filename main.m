@@ -75,7 +75,7 @@ profilo_carico_anno2020 = sum(sum(profilo_gennaio_2020)) + sum(sum(profilo_febbr
 K = 0.8;
 
 % numero di pannelli
-num_PV = profilo_carico_anno2020 / (soleggiamento_anno2020 * K);
+%num_PV = profilo_carico_anno2020 / (soleggiamento_anno2020 * K);
 
 
 % previsione area: circa 7000 m^2
@@ -103,17 +103,16 @@ Potenza_PV_dicembre_2020 = sol_dicembre_2020(:, :) * superfice_pannello * effici
 % Round trip efficiency 90 %, energia prelevabile in un'ora
 carica_scarica_ora = 5;      % KWh
 Round_trip_efficiency = 0.9;
-%Numero_batterie = 15;
 Capacita_Batteria = 14;      %KWh
 
 
 % Range di mantenimento dello stato di carica
 % SOC - stato di carica
-SOCmax = 90 / 100 * Capacita_Batteria; %KWh
-SOCmin = 20 / 100 * Capacita_Batteria; %KWh
+SOCmax = 90 / 100; 
+SOCmin = 20 / 100; 
 
 % SOC iniziale
-SOCinit = 50 / 100 * Capacita_Batteria; %KWh
+SOCinit = 50 / 100;
 
 
 
@@ -142,24 +141,26 @@ fasce_orarie_dicembre = file_fasce_orarie.fasceorariedicembre;
 % vedi appunti
 
 potenza_nominale_inveter = 900 * 670;
-campioni = 100;
-for i = 1 : campioni
-    potenza_rapporto(i) = i / campioni;
-end
+% campioni = 100;
+% for i = 1 : campioni
+%     potenza_rapporto(i) = i / campioni;
+% end
 
 %figure(1)
 %plot(potenza_rapporto, eta_inverter)
 
 %%-----------------------Parameters----------------------
 
-global P_pv P_load Round_trip carica_scarica Cap_batteria
+global P_pv P_load Round_trip carica_scarica Cap_batteria SOC_min SOC_max SOC_init
 P_pv = Potenza_PV_gennaio_2020(1, :)./ 1000;
 P_load = profilo_gennaio_2020(1, :);
 fasce = fasce_orarie_gennaio(1, :);
 Round_trip = Round_trip_efficiency;
 carica_scarica = carica_scarica_ora;
 Cap_batteria = Capacita_Batteria;
-
+SOC_min = SOCmin;
+SOC_max = SOCmax;
+SOC_init = SOCinit;
 %%---------------------------Optimization Algorithm------
 
 % Problem Definition
@@ -167,11 +168,11 @@ Cap_batteria = Capacita_Batteria;
 problem.ObjectiveFunction = @(x) MyFitnessFunction(x);
 problem.nVar = 2;
 problem.VarMin = [1  1];
-problem.VarMax = [10000 500];
+problem.VarMax = [8000 500];
 
 
 % GA Parameters
-params.MaxIt = 200;
+params.MaxIt = 50;
 params.nPop = 100;
 
 params.beta = 1;

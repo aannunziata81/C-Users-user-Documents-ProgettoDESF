@@ -45,12 +45,8 @@ function out = RunGA(problem, params)
         % NVV da evidenziare
         NVV_temp = pop(i).NVV;
         % Compare Solution to Best Solution Ever Found
-        if NVV_temp <= bestNVV
-            bestNVV = NVV_temp;
-            if pop(i).Cost < bestsol.Cost
+        if pop(i).Cost < bestsol.Cost
                     bestsol = pop(i);
-            end
-            
         end
         
     end
@@ -95,7 +91,7 @@ function out = RunGA(problem, params)
             
             % Perform Mutation
             popc(m).Position = round(Mutate(popc(m).Position, mu, sigma));
-            % Check for Varialme Bounds
+            % Check for Variable Bounds
             popc(m).Position = max(popc(m).Position, VarMin);
             popc(m).Position = min(popc(m).Position, VarMax);
             
@@ -116,14 +112,9 @@ function out = RunGA(problem, params)
 %             if (popc(l).Cost < bestsol.Cost & NVV_temp < 20 )
 %                 bestsol = popc(l);
 %             end
-            if NVV_temp <= bestNVV 
-                bestNVV = NVV_temp;
-                
-                if popc(m).Cost < bestsol.Cost
+            if popc(m).Cost < bestsol.Cost
                     bestsol = popc(m);
-                end
-            end
-                
+            end               
             
         end
         
