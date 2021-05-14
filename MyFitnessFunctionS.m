@@ -10,7 +10,6 @@ function [d, E_bat] = MyFitnessFunctionS(x1, x2)
 
     E_load = P_load * delta_t;
     E_pv = P_pv * x1 * delta_t;
-    
     charge_var = charge_init;
     
     for i = 1 : 24

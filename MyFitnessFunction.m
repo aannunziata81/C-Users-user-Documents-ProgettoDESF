@@ -10,7 +10,6 @@ function d = MyFitnessFunction(x)
 
     E_load = P_load * delta_t;
     E_pv = P_pv * x(1) * delta_t;
-    
     charge_var = charge_init;
     andamento_charge(1:24) = 0;
     
@@ -66,5 +65,6 @@ function d = MyFitnessFunction(x)
    
     delta_E = (E_pv + E_bat ) - E_load;
     d = sqrt(sum(delta_E.^2)) * NVV;
+    
     %disp(['distance:'  int2str(d) ' , ' int2str(x(1)) ' - ' int2str(x(2))])
 end

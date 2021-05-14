@@ -19,11 +19,11 @@ function out = RunGA(problem, params)
     % Template for Empty Individuals
     empty_individual.Position = [];
     empty_individual.Cost = [];
-    empty_individual.NVV = [];
+    %empty_individual.NVV = [];
     
     % Best Solution Ever Found
     bestsol.Cost = inf;
-    bestNVV = inf;
+    %bestNVV = inf;
     % Initialization
     pop = repmat(empty_individual, nPop, 1);
     for i = 1 : nPop
@@ -36,14 +36,14 @@ function out = RunGA(problem, params)
         pop(i).Position(2) = randi([VarMin(2) VarMax(2)], 1);
         
         % NVV - vincoli violati
-        pop(i).NVV = MyFitnessFunctionS(pop(i).Position(1), pop(i).Position(2));
+        %pop(i).NVV = MyFitnessFunctionS(pop(i).Position(1), pop(i).Position(2));
         
         % Evaluate Solution
         pop(i).Cost = round(ObjectiveFunction(pop(i).Position));
-        %disp("primi individui " + num2str(pop(i).Position(1)) + ' | ' + num2str(pop(i).Position(2) ))
+        disp("primi individui " + num2str(pop(i).Position(1)) + ' | ' + num2str(pop(i).Position(2) ))
         
-        % NVV da evidenziare
-        NVV_temp = pop(i).NVV;
+        
+        
         % Compare Solution to Best Solution Ever Found
         if pop(i).Cost < bestsol.Cost
                     bestsol = pop(i);
@@ -79,7 +79,7 @@ function out = RunGA(problem, params)
             % Perform Crossover
             [popc(k, 1).Position, popc(k, 2).Position] = ...
                 UniformCrossover(p1.Position, p2.Position, gamma);
-            %disp("crossover " + num2str(popc(k, 1).Position(1)) + ' | ' + num2str(popc(k, 1).Position(2) ))
+            disp("crossover " + num2str(popc(k, 1).Position(1)) + ' | ' + num2str(popc(k, 1).Position(2) ))
 
         end
         
@@ -95,16 +95,14 @@ function out = RunGA(problem, params)
             popc(m).Position = max(popc(m).Position, VarMin);
             popc(m).Position = min(popc(m).Position, VarMax);
             
-            %disp("mutate " + num2str(popc(m).Position(1)) + ' | ' + num2str(popc(m).Position(2)))
+            disp("mutate " + num2str(popc(m).Position(1)) + ' | ' + num2str(popc(m).Position(2)))
             % NVV
-            popc(m).NVV = MyFitnessFunctionS(popc(m).Position(1), popc(m).Position(2));
+            %popc(m).NVV = MyFitnessFunctionS(popc(m).Position(1), popc(m).Position(2));
             
             % Evaluation
             popc(m).Cost = round(ObjectiveFunction(popc(m).Position));
             %disp("costo: " + int2str(popc(m).Cost))
-            NVV_temp = popc(i).NVV;
-            
-            
+            %NVV_temp = popc(i).NVV;
             
             %disp('mutate ' + num2str(popc(m).Position))
             

@@ -60,7 +60,6 @@ profilo_carico_anno2020 = sum(sum(profilo_gennaio_2020)) + sum(sum(profilo_febbr
 
 
 
-
 %-----------------Pannelli Fotovoltaici----------------
 % Pannelli fotovoltaici - Modello: Vertex TSM-DE21 635-670
 % Singolo pannello specifiche:
@@ -152,9 +151,9 @@ potenza_nominale_inveter = 900 * 670;
 %%-----------------------Parameters----------------------
 
 global P_pv P_load Round_trip carica_scarica Cap_batteria SOC_min SOC_max SOC_init
-P_pv = Potenza_PV_gennaio_2020(1, :)./ 1000;
-P_load = profilo_gennaio_2020(1, :);
-fasce = fasce_orarie_gennaio(1, :);
+P_pv = Potenza_PV_luglio_2020(1, :)./ 1000;
+P_load = profilo_luglio_2020(1, :);
+fasce = fasce_orarie_luglio(1, :);
 Round_trip = Round_trip_efficiency;
 carica_scarica = carica_scarica_ora;
 Cap_batteria = Capacita_Batteria;
@@ -168,11 +167,11 @@ SOC_init = SOCinit;
 problem.ObjectiveFunction = @(x) MyFitnessFunction(x);
 problem.nVar = 2;
 problem.VarMin = [1  1];
-problem.VarMax = [8000 500];
+problem.VarMax = [8000 300];
 
 
 % GA Parameters
-params.MaxIt = 50;
+params.MaxIt = 20;
 params.nPop = 100;
 
 params.beta = 1;
