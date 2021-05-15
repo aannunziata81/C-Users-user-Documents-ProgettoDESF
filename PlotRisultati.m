@@ -1,12 +1,12 @@
 [Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init] = parameter_pass();
 
-Npv = 327;
-Nb = 277;
+Npv = 482;
+Nb = 297;
 deltat = 1;
 E_carico = Pl * deltat;
 E_pannellifoto = Pp * Npv * deltat;
 
-[NVV E_batteria] = MyFitnessFunctionS(Npv, Nb);
+[E_batteria, E_grid, d, Costo] = MyFitnessFunctionGridS(Npv, Nb);
 
 figure(1)
 plot(E_carico, 'color', 'b')
@@ -40,7 +40,7 @@ for i=1:24
         andamento_carica(i) = charge_;
     end
 end
-
+disp(int2str(d))
 figure(2)
 
 plot(1:24, chargeMax, 'color', 'r','LineWidth',2)
@@ -52,4 +52,8 @@ title('Andamento batterie 24h')
 legend( 'Charge max','Charge min','Charge init','Andamento carica')
 xlabel('Time [hour]');
 ylabel('Capacity of battery [KWh]');
+grid on
+figure(3)
+plot (1:24, Costo)
+ylabel('Energia')
 grid on

@@ -164,14 +164,14 @@ SOC_init = SOCinit;
 
 % Problem Definition
 
-problem.ObjectiveFunction = @(x) MyFitnessFunction(x);
+problem.ObjectiveFunction = @(x) MyFitnessFunctionGrid(x);
 problem.nVar = 2;
 problem.VarMin = [1  1];
 problem.VarMax = [8000 300];
 
 
 % GA Parameters
-params.MaxIt = 20;
+params.MaxIt = 150;
 params.nPop = 100;
 
 params.beta = 1;
