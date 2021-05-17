@@ -1,7 +1,7 @@
 [Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init] = parameter_pass();
 
-Npv = 482;
-Nb = 297;
+Npv = 36;
+Nb = 115;
 deltat = 1;
 E_carico = Pl * deltat;
 E_pannellifoto = Pp * Npv * deltat;

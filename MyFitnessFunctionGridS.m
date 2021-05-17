@@ -7,7 +7,8 @@ function [E_bat, E_grid, d, Costo] = MyFitnessFunctionGridS(x1, x2)
     charge_max = charge * SOC_M;
     charge_min = charge * SOC_m;
     charge_init = charge * SOC_init; 
-
+    limite_sup = charge_init * 1.3;
+    limite_inf = charge_init * 0.7;
     E_load = P_load * delta_t;
     E_pv = P_pv * x1 * delta_t;
     charge_var = charge_init;
@@ -21,7 +22,7 @@ function [E_bat, E_grid, d, Costo] = MyFitnessFunctionGridS(x1, x2)
     
     for i = 1 : 24
         Energy = E_load(i) - E_pv(i);
-        if i > 8 | i < 19
+        if i > 8 || i < 19
             if Energy > 0 
                 if (carica_scarica_ora * x2* Round_trip_efficiency) < Energy 
                     E_bat(i) = - carica_scarica_ora * x2* Round_trip_efficiency;%scarico batt
@@ -37,7 +38,7 @@ function [E_bat, E_grid, d, Costo] = MyFitnessFunctionGridS(x1, x2)
             elseif Energy < 0
                 %vendo
                 E_grid(i) = - Energy;%positivo
-                Costo(i) = - E_grid(i);
+                Costo(i) = E_grid(i);
                 andamento_charge(i) = charge_var;
             else
                 andamento_charge(i) = charge_var;
@@ -58,10 +59,8 @@ function [E_bat, E_grid, d, Costo] = MyFitnessFunctionGridS(x1, x2)
                     charge_var = charge_var + E_bat(i);%carico
                     andamento_charge(i) = charge_var;
                 else
-                    %carico batt
-                    E_bat(i) = carica_scarica_ora * x2;
-                    E_grid(i) = E_bat(i) + Energy;%residuo
-                    Costo(i) = E_grid(i);
+                    %carico batt, quello che rimane lo vendo
+                    E_bat(i) = - Energy ;
                     charge_var = charge_var + E_bat(i);%carico
                     andamento_charge(i) = charge_var;
                 end
@@ -70,13 +69,13 @@ function [E_bat, E_grid, d, Costo] = MyFitnessFunctionGridS(x1, x2)
             end
             
         end
-        if (andamento_charge(i) <= charge_min) | (andamento_charge(i) >= charge_max)
+        if (andamento_charge(i) <= charge_min) || (andamento_charge(i) >= charge_max)
             NVV = NVV + 1;
         end
         
     end
-    if charge_var ~= charge_init
-        NVV = NVV + 1;
+    if (charge_var < limite_inf || charge_var > limite_sup)
+        NVV = NVV + 30;
     end
     %disp(int2str(NVV));
     %disp(int2str(NVV)  + "| " + int2str(x1) + " f " + int2str(x2))

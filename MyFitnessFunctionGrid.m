@@ -7,7 +7,9 @@ function d = MyFitnessFunctionGrid(x)
     charge_max = charge * SOC_M;
     charge_min = charge * SOC_m;
     charge_init = charge * SOC_init; 
-
+    limite_sup = charge_init * 1.3;
+    limite_inf = charge_init * 0.7;
+    
     E_load = P_load * delta_t;
     E_pv = P_pv * x(1) * delta_t;
     charge_var = charge_init;
@@ -21,14 +23,16 @@ function d = MyFitnessFunctionGrid(x)
     
     for i = 1 : 24
         Energy = E_load(i) - E_pv(i);
-        if i > 8 | i < 19
+        %energy positiva: ho bisogno di carica
+        %energy negativa: ho un eccesso di carica
+        if i > 8 || i < 19
             if Energy > 0 
                 if (carica_scarica_ora * x(2)* Round_trip_efficiency) < Energy 
-                    E_bat(i) = - carica_scarica_ora * x(2)* Round_trip_efficiency;%scarico batt
+                    E_bat(i) = - carica_scarica_ora * x(2)* Round_trip_efficiency; %scarico batt
                     E_grid(i) = - E_bat(i) - Energy;
                     charge_var = charge_var + E_bat(i);%sottraggo
                     andamento_charge(i) = charge_var;
-                    Costo(i) = E_grid(i); %negativo
+                    Costo(i) = E_grid(i); %negativo, spendo
                 else 
                     E_bat(i) = - Energy;
                     charge_var = charge_var + E_bat(i);
@@ -37,31 +41,30 @@ function d = MyFitnessFunctionGrid(x)
             elseif Energy < 0
                 %vendo
                 E_grid(i) = - Energy;%positivo
-                Costo(i) = - E_grid(i);
+                Costo(i) = E_grid(i);
                 andamento_charge(i) = charge_var;
             else
                 andamento_charge(i) = charge_var;
             end
         else 
             if Energy > 0 
-                E_bat(i) = carica_scarica_ora * x(2);
+                E_bat(i) = carica_scarica_ora * x(2); %carico
                 E_grid(i) = - Energy;%prendo dalla rete
                 Costo(i) = E_grid(i) - E_bat(i);
                 charge_var = charge_var + E_bat(i);%carico
                 andamento_charge(i) = charge_var;
-            elseif Energy < 0
+                
+            elseif Energy < 0 %eccesso di carica
                 if (carica_scarica_ora * x(2)) < - Energy
-                    %di notte carico
+                    %di notte 
                     E_bat(i) = carica_scarica_ora * x(2);
                     E_grid(i) = - Energy - E_bat(i);%residuo
                     Costo(i) = E_grid(i);%vendo
                     charge_var = charge_var + E_bat(i);%carico
                     andamento_charge(i) = charge_var;
                 else
-                    %carico batt
-                    E_bat(i) = carica_scarica_ora * x(2);
-                    E_grid(i) = E_bat(i) + Energy;%residuo
-                    Costo(i) = E_grid(i);
+                    %carico batt, quello che rimane lo vendo
+                    E_bat(i) = - Energy ;
                     charge_var = charge_var + E_bat(i);%carico
                     andamento_charge(i) = charge_var;
                 end
@@ -69,12 +72,12 @@ function d = MyFitnessFunctionGrid(x)
                 andamento_charge(i) = charge_var;
             end
         end
-        if (andamento_charge(i) <= charge_min) | (andamento_charge(i) >= charge_max)
+        if (andamento_charge(i) <= charge_min) || (andamento_charge(i) >= charge_max)
             NVV = NVV + 1;
         end
     end
-    if charge_var ~= charge_init
-        NVV = NVV + 1;
+    if (charge_var < limite_inf || charge_var > limite_sup)
+        NVV = NVV + 30;
     end
     %disp(int2str(NVV));
     %disp(int2str(NVV)  + "| " + int2str(x(1)) + " f " + int2str(x(2)))
