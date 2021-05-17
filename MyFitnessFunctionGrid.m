@@ -1,22 +1,22 @@
 function d = MyFitnessFunctionGrid(x)
+%grid con tendenza stand alone
     [P_load, P_pv, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init] = parameter_pass();
-    
+    up = 1.2;
+    down = 0.8;
     delta_t = 1;
-    NVV = 1;
+    NVV = 0;
+    fattore_moltiplicativo = 1;
     charge = capacita_batteria * x(2);
     charge_max = charge * SOC_M;
     charge_min = charge * SOC_m;
     charge_init = charge * SOC_init; 
-    limite_sup = charge_init * 1.3;
-    limite_inf = charge_init * 0.7;
-    
+    %limite_sup = charge_init * up;
+    limite_inf = charge_init * down;
     E_load = P_load * delta_t;
     E_pv = P_pv * x(1) * delta_t;
     charge_var = charge_init;
     andamento_charge(1:24) = 0;
-    %i=8,9,10,11,12,13,14,15,16,17,18 fascia F1
-    %i=7,19,20,21,22 fascia F2
-    %i=23,24,1,2,3,4,5,6 fascia F3
+   
     Costo(1:24) = 0;
     E_bat(1:24) = 0;
     E_grid(1:24) = 0;
@@ -76,13 +76,23 @@ function d = MyFitnessFunctionGrid(x)
             NVV = NVV + 1;
         end
     end
-    if (charge_var < limite_inf || charge_var > limite_sup)
-        NVV = NVV + 30;
+    if charge_var < limite_inf 
+        NVV = NVV + 1;
     end
     %disp(int2str(NVV));
     %disp(int2str(NVV)  + "| " + int2str(x(1)) + " f " + int2str(x(2)))
-   
+    if NVV == 0
+        fattore_moltiplicativo = 0.1;
+    else
+        fattore_moltiplicativo = 1;
+        for i=1:NVV
+            fattore_moltiplicativo = fattore_moltiplicativo * 10;
+            
+        end
+    end
+    
+    
     delta_E = (E_pv + E_bat + E_grid) - E_load;
-    d = sqrt(sum(delta_E.^2)) * NVV;
+    d = sqrt(sum(delta_E.^2)) * fattore_moltiplicativo;
     %disp(['distance:'  int2str(d) ' , ' int2str(x(1)) ' - ' int2str(x(2))])
 end

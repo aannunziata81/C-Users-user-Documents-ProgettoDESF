@@ -1,12 +1,12 @@
 [Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init] = parameter_pass();
 
-Npv = 36;
-Nb = 115;
+Npv = 11136;
+Nb = 10;
+
 deltat = 1;
 E_carico = Pl * deltat;
 E_pannellifoto = Pp * Npv * deltat;
-
-[E_batteria, E_grid, d, Costo] = MyFitnessFunctionGridS(Npv, Nb);
+[E_batteria, E_grid, d, Costo] = MyFitnessFunctionGridSPlus(Npv, Nb);
 
 figure(1)
 plot(E_carico, 'color', 'b')
@@ -19,9 +19,9 @@ xlabel('Time [hour]');
 ylabel('Energy [KWh]');
 grid on 
 
-chargeInit(1:24) =  14 * Nb * SOC_init;
-chargeMax(1:24) = 14 * Nb * SOC_M;
-chargeMin(1:24) = 14 * Nb * SOC_m;
+chargeInit(1:24) =  capacita_batteria * Nb * SOC_init;
+chargeMax(1:24) = capacita_batteria * Nb * SOC_M;
+chargeMin(1:24) = capacita_batteria * Nb * SOC_m;
 
 charge_ = chargeInit(1);
 andamento_carica(1:24) = 0;

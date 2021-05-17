@@ -151,9 +151,9 @@ potenza_nominale_inveter = 900 * 670;
 %%-----------------------Parameters----------------------
 
 global P_pv P_load Round_trip carica_scarica Cap_batteria SOC_min SOC_max SOC_init
-P_pv = Potenza_PV_maggio_2020(1, :)./ 1000;
-P_load = profilo_maggio_2020(1, :);
-fasce = fasce_orarie_maggio(1, :);
+P_pv = Potenza_PV_gennaio_2020(1, :)./ 1000;
+P_load = profilo_gennaio_2020(1, :);
+fasce = fasce_orarie_gennaio(1, :);
 Round_trip = Round_trip_efficiency;
 carica_scarica = carica_scarica_ora;
 Cap_batteria = Capacita_Batteria;
@@ -164,10 +164,10 @@ SOC_init = SOCinit;
 
 % Problem Definition
 
-problem.ObjectiveFunction = @(x) MyFitnessFunctionGrid(x);
+problem.ObjectiveFunction = @(x) MyFitnessFunctionGridPlus(x);
 problem.nVar = 2;
-problem.VarMin = [1  1];
-problem.VarMax = [8000 300];
+problem.VarMin = [1 1];
+problem.VarMax = [8000 1000];
 
 
 % GA Parameters
@@ -187,7 +187,7 @@ out = RunGA(problem, params);
 figure;
 %plot(out.bestcost, 'LineWidth', 2);
 %semilogy(out.bestcost, 'LineWidth', 2);
-semilogy(out.bestcost, '*');
+plot(out.bestcost,'LineWidth', 2);
 xlabel('Iterations');
 ylabel('Best Cost');
 grid on;

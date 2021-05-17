@@ -1,4 +1,5 @@
 function d = MyFitnessFunction(x)
+%stand alone
     [P_load, P_pv, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init] = parameter_pass();
     
     delta_t = 1;
