@@ -9,8 +9,8 @@ function d = MyFitnessFunction(x)
     charge_min = charge * SOC_m;
     charge_init = charge * SOC_init; 
 
-    E_load = P_load * delta_t;
-    E_pv = P_pv * x(1) * delta_t;
+    E_load = P_load(1).month(1,:) * delta_t;
+    E_pv = P_pv(1).month(1,:) * x(1) * delta_t;
     charge_var = charge_init;
     andamento_charge(1:24) = 0;
     

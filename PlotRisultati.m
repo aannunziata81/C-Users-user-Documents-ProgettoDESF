@@ -6,7 +6,7 @@ Nb = 10;
 deltat = 1;
 E_carico = Pl * deltat;
 E_pannellifoto = Pp * Npv * deltat;
-[E_batteria, E_grid, d, Costo] = MyFitnessFunctionGridSPlus(Npv, Nb);
+[E_batteria, E_grid, d, Costo] = MyFitnessFunctionGridAnnoS(Npv, Nb);
 
 figure(1)
 plot(E_carico, 'color', 'b')
