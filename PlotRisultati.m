@@ -1,12 +1,11 @@
 [Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init] = parameter_pass();
 
-Npv = 11136;
-Nb = 10;
-
+Npv = 1456;
+Nb = 982;
 deltat = 1;
 E_carico = Pl * deltat;
 E_pannellifoto = Pp * Npv * deltat;
-[E_batteria, E_grid, d, Costo] = MyFitnessFunctionGridAnnoS(Npv, Nb);
+[E_batteria, E_grid, d, Costo, andamento_charge] = MyFitnessFunctionGridAnnoS(Npv, Nb);
 
 figure(1)
 plot(E_carico, 'color', 'b')
@@ -22,24 +21,35 @@ grid on
 chargeInit(1:24) =  capacita_batteria * Nb * SOC_init;
 chargeMax(1:24) = capacita_batteria * Nb * SOC_M;
 chargeMin(1:24) = capacita_batteria * Nb * SOC_m;
-
-charge_ = chargeInit(1);
-andamento_carica(1:24) = 0;
-
-for i=1:24
-    if E_batteria(i) > 0
-        charge_ = charge_ + E_batteria(i);
-        andamento_carica(i) = charge_;
+ore = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12',...
+'13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '1'}
+figure(1)
+for i = 1:12
+    subplot(12, 1, i)
+    in = 1;
+    fin = 24;
+    h = 24;
+    for j = 1:length(Pl(i).month)
         
-    elseif E_batteria(i) < 0
+        fin = j * fin;
+        for k = in:fin
+            y_bat(k) = E_batteria(j,k);
+            y_load(k) = E_carico(j,k);
+            y_pv(k) = E_pannellifoto(j,k);
+        end
+        in = in + h;
         
-        charge_ = charge_ + E_batteria(i);
-        andamento_carica(i) = charge_;
-        
-    else
-        andamento_carica(i) = charge_;
     end
+    plot(y_bat)
+    hold on
+    plot(y_load)
+    plot(y_pv)
+    set(gca,'xtick',1:24*length(Pl(i).month),...
+        'xticklabel',ore);
 end
+
+%%set(gca,'xtick',1:24,...
+%          'xticklabel',ore);
 disp(int2str(d))
 figure(2)
 

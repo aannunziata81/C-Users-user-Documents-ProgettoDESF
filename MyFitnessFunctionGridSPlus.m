@@ -87,7 +87,6 @@ function [E_bat, E_grid, d, Costo] = MyFitnessFunctionGridSPlus(x1, x2)
     if NVV == 0
         fattore_moltiplicativo = 0.1;
     else
-        fattore_moltiplicativo = 1;
         for i=1:NVV
             fattore_moltiplicativo = fattore_moltiplicativo * 10;
             

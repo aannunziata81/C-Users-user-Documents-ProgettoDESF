@@ -4,8 +4,6 @@ function d = MyFitnessFunctionGridPlusAnno(x)
     up = 1.2;
     down = 0.8;
     delta_t = 1;
-    
-    
     charge = capacita_batteria * x(2);
     charge_max = charge * SOC_M;
     charge_min = charge * SOC_m;
@@ -14,7 +12,6 @@ function d = MyFitnessFunctionGridPlusAnno(x)
     limite_inf = charge_init * down;
 
     charge_var = charge_init;
-    
     andamento_charge(1:24) = 0;
     Costo(1:24) = 0;
     E_bat(1:24) = 0;
