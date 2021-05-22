@@ -34,7 +34,7 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
                 Energy = E_load(j,i) - E_pv(j,i);
                 %energy positiva: ho bisogno di carica
                 %energy negativa: ho un eccesso di carica
-                if i > 8 || i < 19
+                if (i > 8 && i < 19)
                     if Energy > 0
                         if (carica_scarica_ora * x2* Round_trip_efficiency) < Energy
                             E_grid(j,i) = - Energy;

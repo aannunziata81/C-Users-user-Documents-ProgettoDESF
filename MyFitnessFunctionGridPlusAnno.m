@@ -28,7 +28,7 @@ function d = MyFitnessFunctionGridPlusAnno(x)
                 Energy = E_load(i) - E_pv(i);
                 %energy positiva: ho bisogno di carica
                 %energy negativa: ho un eccesso di carica
-                if i > 8 || i < 19
+                if (i > 8 && i < 19)
                     if Energy > 0
                         if (carica_scarica_ora * x(2)* Round_trip_efficiency) < Energy
                             E_grid(i) = - Energy;

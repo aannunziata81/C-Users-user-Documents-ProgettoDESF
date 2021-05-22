@@ -24,7 +24,7 @@ function [E_bat, E_grid, d, Costo] = MyFitnessFunctionGridSPlus(x1, x2)
     
     for i = 1 : 24
         Energy = E_load(i) - E_pv(i);
-        if i > 8 || i < 19
+        if (i > 8 && i < 19)
             if Energy > 0
                 if (carica_scarica_ora * x2* Round_trip_efficiency) < Energy 
                     E_grid(i) = - Energy;
