@@ -1,3 +1,4 @@
+
 function [Pload, Ppv, capacita_batteria, round_trip, carica_scarica_ora, SOCmax, SOCmin, SOCinit] = parameter_pass()
 
 global P_pv P_load Round_trip carica_scarica Cap_batteria SOC_max SOC_min SOC_init

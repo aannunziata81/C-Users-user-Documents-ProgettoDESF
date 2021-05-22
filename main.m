@@ -3,7 +3,7 @@ clear all, clc, close all
 
 %% Vettore giornata
 ore = 0 : 23;
-
+delta_t = 1   %ora
 
 %------------------Soleggiamento--------------------
 % Soleggiamento Anno 2020 (W/m^2)
@@ -55,6 +55,7 @@ profilo_dicembre_2020 = file_profilo_carico.profilo_carico_dicembre;
 
 % Consumo annuo del carico
 profilo_carico_anno2020 = sum(sum(profilo_gennaio_2020)) + sum(sum(profilo_febbraio_2020)) + sum(sum(profilo_marzo_2020)) + sum(sum(profilo_aprile_2020)) + sum(sum(profilo_maggio_2020)) + sum(sum(profilo_giugno_2020)) + sum(sum(profilo_luglio_2020)) + sum(sum(profilo_agosto_2020)) + sum(sum(profilo_settembre_2020)) + sum(sum(profilo_ottobre_2020)) + sum(sum(profilo_novembre_2020)) + sum(sum(profilo_dicembre_2020));
+
 profilo_carico_2020(1).month = file_profilo_carico.profilo_carico_gennaio;
 profilo_carico_2020(2).month = file_profilo_carico.profilo_carico_febbraio;
 profilo_carico_2020(3).month = file_profilo_carico.profilo_carico_marzo;
@@ -69,6 +70,7 @@ profilo_carico_2020(11).month = file_profilo_carico.profilo_carico_novembre;
 profilo_carico_2020(12).month = file_profilo_carico.profilo_carico_dicembre;
 
 
+
 %-----------------Pannelli Fotovoltaici----------------
 % Pannelli fotovoltaici - Modello: Vertex TSM-DE21 635-670
 % Singolo pannello specifiche:
@@ -77,7 +79,7 @@ profilo_carico_2020(12).month = file_profilo_carico.profilo_carico_dicembre;
 % Tensione di circuito aperto 46.1 Volt
 % Corrente di corto circuito 18.62 A
 % MPP: Vmpp = 38.2 V; Impp = 17.55 A
-% Prezzo caduno € 850,00
+% Prezzo caduno € 1.200,00
 
 % design margin
 K = 0.8;
@@ -86,8 +88,8 @@ K = 0.8;
 %num_PV = profilo_carico_anno2020 / (soleggiamento_anno2020 * K);
 
 
-% previsione area: circa 7000 m^2
-superfice_pannello = 2.384 * 1.303;
+% previsione area: circa 6000 m^2 (3.11 * 900)
+superfice_pannello = (2.384 * 1.303);
 efficienza_pannello = 0.216;
 
 % Potenza generata da un pannello fotovoltaico,  
@@ -125,6 +127,8 @@ Potenza_PV_2020(12).month = Potenza_PV_dicembre_2020;
 carica_scarica_ora = 5;      % KWh
 Round_trip_efficiency = 0.9;
 Capacita_Batteria = 14;      %KWh
+DOD = 1;
+
 
 
 % Range di mantenimento dello stato di carica
@@ -154,6 +158,8 @@ fasce_orarie_settembre = file_fasce_orarie.fasceorariesettembre;
 fasce_orarie_ottobre = file_fasce_orarie.fasceorarieottobre;
 fasce_orarie_novembre = file_fasce_orarie.fasceorarienovembre;
 fasce_orarie_dicembre = file_fasce_orarie.fasceorariedicembre;
+
+
 
 %----------------------Inverter------------------------
 % Rappresentazione qualitativa della caratteristica dell'inverter
@@ -212,6 +218,20 @@ plot(out.bestcost,'LineWidth', 2);
 xlabel('Iterations');
 ylabel('Best Cost');
 grid on;
+
+
+
+
+
+
+
+
+
+
+
+
+
+%----------------------Pale eolica---------------------
 
 
 
