@@ -3,7 +3,7 @@ clear all, clc, close all
 
 %% Vettore giornata
 ore = 0 : 23;
-
+delta_t = 1   %ora
 
 %------------------Soleggiamento--------------------
 % Soleggiamento Anno 2020 (W/m^2)
@@ -59,8 +59,6 @@ profilo_dicembre_2020 = file_profilo_carico.profilo_carico_dicembre;
 profilo_carico_anno2020 = sum(sum(profilo_gennaio_2020)) + sum(sum(profilo_febbraio_2020)) + sum(sum(profilo_marzo_2020)) + sum(sum(profilo_aprile_2020)) + sum(sum(profilo_maggio_2020)) + sum(sum(profilo_giugno_2020)) + sum(sum(profilo_luglio_2020)) + sum(sum(profilo_agosto_2020)) + sum(sum(profilo_settembre_2020)) + sum(sum(profilo_ottobre_2020)) + sum(sum(profilo_novembre_2020)) + sum(sum(profilo_dicembre_2020));
 
 
-
-
 %-----------------Pannelli Fotovoltaici----------------
 % Pannelli fotovoltaici - Modello: Vertex TSM-DE21 635-670
 % Singolo pannello specifiche:
@@ -69,7 +67,7 @@ profilo_carico_anno2020 = sum(sum(profilo_gennaio_2020)) + sum(sum(profilo_febbr
 % Tensione di circuito aperto 46.1 Volt
 % Corrente di corto circuito 18.62 A
 % MPP: Vmpp = 38.2 V; Impp = 17.55 A
-% Prezzo caduno € 850,00
+% Prezzo caduno € 1.200,00
 
 % design margin
 K = 0.8;
@@ -78,8 +76,8 @@ K = 0.8;
 num_PV = profilo_carico_anno2020 / (soleggiamento_anno2020 * K);
 
 
-% previsione area: circa 7000 m^2
-superfice_pannello = 900 * (2.384 * 1.303);
+% previsione area: circa 6000 m^2 (3.11 * 900)
+superfice_pannello = (2.384 * 1.303);
 efficienza_pannello = 0.216;
 
 % Potenza generata da un pannello fotovoltaico,  
@@ -101,11 +99,12 @@ Potenza_PV_dicembre_2020 = sol_dicembre_2020(:, :) * superfice_pannello * effici
 % Batteria - PowerWall 2 - Tesla da 14 KWh - Costo € 6.000,00
 % Scarica e carica batteria 5 KWh, per 10 secondi 7 KWh
 % Round trip efficiency 90 %, energia prelevabile in un ora
-carica_scarica_ora = 5;      % KWh
 Round_trip_efficiency = 0.9;
+carica_scarica_ora = 5 * Round_trip_efficiency;      % KWh
+DOD = 1;
 Numero_batterie = 15;
-Capacita_Batteria = 14 * Numero_batterie;      %KWh
-
+Capacita_Batteria = 14;      %KWh
+Potenza_batteria_scarica_carica = carica_scarica_ora / delta_t;
 
 % Range di mantenimento dello stato di carica
 % SOC - stato di carica
@@ -125,6 +124,8 @@ prezzo_vendita_energia_elettrica = 0.04018;
 
 
 
+
+
 %----------------------Inverter------------------------
 % Rappresentazione qualitativa della caratteristica dell'inverter
 % basandosi sulla potenza che può generare l'impianto PV
@@ -136,5 +137,62 @@ for i = 1 : campioni
     potenza_rapporto(i) = i / campioni;
 end
 
-figure(1)
-plot(potenza_rapporto, eta_inverter)
+% figure(1)
+% plot(potenza_rapporto, unnamed)
+
+
+
+
+
+%------------------Ottimizzazione--------------------
+
+
+ 
+global Pload Ppv Pb
+% Caso 1
+Pload = profilo_gennaio_2020(1, :);
+
+Ppv = Potenza_PV_gennaio_2020(1, :)./ 1000;
+Pb(1:24) = zeros;
+Pb(1) = SOCinit / delta_t;
+
+
+% Caso 2
+Pload = profilo_maggio_2020(1, :);
+
+Ppv = Potenza_PV_maggio_2020(1, :)./ 1000;
+
+
+% Caso 3
+Pload = profilo_agosto_2020(1, :);
+
+Ppv = Potenza_PV_agosto_2020(1, :)./ 1000;
+
+% SOCmin <= carica_batteria <= SOCmax
+% SOC init 50% della carica
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%----------------------Pale eolica---------------------
+
+
+
