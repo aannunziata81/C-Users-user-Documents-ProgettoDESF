@@ -41,7 +41,7 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
                             andamento_charge(j,i) = charge_var;
                             Costo(j,i) = E_grid(j,i); %negativo, compro tutto
                         else
-                            E_bat(j,i) = - Energy; %prengo dalla batteria
+                            E_bat(j,i) = - Energy; %prendo dalla batteria
                             charge_var = charge_var + E_bat(j,i);
                             andamento_charge(j,i) = charge_var;
                         end
