@@ -6,4 +6,3 @@ d = sqrt(sum(delta_p.^2));
 
 end
 
-
