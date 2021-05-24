@@ -46,7 +46,7 @@ function out = RunGA(problem, params)
         
         % Compare Solution to Best Solution Ever Found
         if pop(i).Cost < bestsol.Cost
-                    bestsol = pop(i);
+            bestsol = pop(i);
         end
         
     end

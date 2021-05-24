@@ -1,8 +1,8 @@
 
 [Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init] = parameter_pass();
 
-Npv = 270;
-Nb = 57;
+Npv = 240;
+Nb = 35;
 deltat = 1;
 [E_carico, E_pannellifoto, E_batteria, E_grid, d, Costo, andamento_charge] = MyFitnessFunctionGridPlusAnnoS(Npv, Nb);
 
@@ -20,8 +20,8 @@ deltat = 1;
 % chargeInit =  capacita_batteria * Nb * SOC_init;
 % chargeMax = ;
 % chargeMin(1:24) = capacita_batteria * Nb * SOC_m;
-% ore = {'', '', '', '', '', '', '', '', '', '', '', sprintf("%d Gen",jj),...
-% '', '', '', '', '', '', '', '', '', '', '', ''};
+ore = {'1', '', '', '', '', '', '', '', '', '', '', '',...
+'', '', '', '', '', '', '', '', '', '', '', '24'};
 figure(1)
 for i = 1:1
     subplot(1,1,i)

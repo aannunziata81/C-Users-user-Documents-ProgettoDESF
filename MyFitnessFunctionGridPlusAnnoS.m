@@ -4,7 +4,6 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
     down = 0.8;
     delta_t = 1;
     NVV = 0;
-    fattore_moltiplicativo = 1;
     charge = capacita_batteria * x2;
     charge_max = charge * SOC_M;
     charge_min = charge * SOC_m;
@@ -24,97 +23,181 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
     E_grid(length(P_load(1).month), 1:24) = 0;
     andamento_charge(length(P_load(1).month), 1:24) = 0;
     E_bat(length(P_load(1).month), 1:24) = 0;
-    for k = 1 : 12 
+    row_accumulate = 0;
+    
+    
+    for k = 1 : 12
+ 
         for j = 1 : length(P_load(k).month)
-            NVV = 0;
-            E_load(j,:) = P_load(k).month(j,:) * delta_t;
-            E_pv(j,:) = P_pv(k).month(j,:) * x1 * delta_t;
-            fattore_moltiplicativo = 1;
+            E_load(row_accumulate +   j,:) = P_load(k).month(j,:) * delta_t;
+            E_pv(row_accumulate + j,:) = P_pv(k).month(j,:) * x1 * delta_t;
             for i = 1 : 24
-                Energy = E_load(j,i) - E_pv(j,i);
+                Energy = E_load(row_accumulate + j,i) - E_pv(row_accumulate + j,i);
                 %energy positiva: ho bisogno di carica
                 %energy negativa: ho un eccesso di carica
+
                 if (i > 8 && i < 19)
                     if Energy > 0
-                        if (carica_scarica_ora * x2* Round_trip_efficiency) < Energy
-                            E_grid(j,i) = - Energy;
-                            andamento_charge(j,i) = charge_var;
-                            Costo(j,i) = E_grid(j,i); %negativo, compro tutto
+                        if (carica_scarica_ora * x2 * Round_trip_efficiency) < Energy
+                            if charge_var - carica_scarica_ora * x2 * Round_trip_efficiency >= charge_min
+                                E_bat(row_accumulate + j,i) = - carica_scarica_ora * x2 * Round_trip_efficiency; %scarico batt
+                                E_grid(row_accumulate + j,i) = - E_bat(row_accumulate + j,i) - Energy;
+                                charge_var = charge_var + E_bat(row_accumulate + j,i);
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                                Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i); %negativo
+                            elseif not(under_bound)
+                                E_bat(row_accumulate + j,i) = - carica_scarica_ora * x2 * Round_trip_efficiency; %scarico batt
+                                E_grid(row_accumulate + j,i) = - E_bat(row_accumulate + j,i) - Energy;
+                                charge_var = charge_var + E_bat(row_accumulate + j,i);
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                                Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i); %negativo
+                                under_bound = 1;
+                            else
+                                E_grid(row_accumulate + j,i) = - Energy;
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                                Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i); %negativo, compro tutto
+                            end
                         else
-                            E_bat(j,i) = - Energy; %prendo dalla batteria
-                            charge_var = charge_var + E_bat(j,i);
-                            andamento_charge(j,i) = charge_var;
+                            if charge_var - Energy >= charge_min
+                                E_bat(row_accumulate + j,i) = - Energy; %prengo dalla batteria
+                                charge_var = charge_var + E_bat(row_accumulate + j,i);
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                            elseif not(under_bound)
+                                E_bat(row_accumulate + j,i) = - Energy; %prengo dalla batteria
+                                charge_var = charge_var + E_bat(row_accumulate + j,i);
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                                under_bound = 1;
+                            else
+                                E_grid(row_accumulate + j,i) = - Energy;
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                                Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i); %negativo, compro tutto
+                            end
                         end
                     elseif Energy < 0
                         %vendo
                         if (carica_scarica_ora * x2) < - Energy
-                            E_grid(j,i) = - Energy;%positivo
-                            Costo(j,i) = E_grid(j,i);
-                            andamento_charge(j,i) = charge_var;
+                            E_grid(row_accumulate + j,i) = - Energy;%positivo
+                            Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);
+                            andamento_charge(row_accumulate + j,i) = charge_var;
                         else
-                            E_bat(j,i) = - Energy;
-                            charge_var = charge_var + E_bat(j,i);
-                            andamento_charge(j,i) = charge_var;
+                            if charge_var - Energy <= charge_max
+                                E_bat(row_accumulate + j,i) = - Energy;
+                                charge_var = charge_var + E_bat(row_accumulate + j,i);
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                            elseif not(over_bound)
+                                E_bat(row_accumulate + j,i) = - Energy;
+                                charge_var = charge_var + E_bat(row_accumulate + j,i);
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                                over_bound = 1;
+                            else
+                                E_grid(row_accumulate + j,i) = - Energy;%positivo
+                                Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                            end
                         end
                     else
-                        andamento_charge(j,i) = charge_var;
+                        andamento_charge(row_accumulate + j,i) = charge_var;
                     end
                 else
                     if Energy > 0
-                        E_bat(j,i) = carica_scarica_ora * x2; %carico
-                        E_grid(j,i) = - Energy;%prendo dalla rete
-                        Costo(j,i) = E_grid(j,i) - E_bat(j,i);
-                        charge_var = charge_var + E_bat(j,i);%carico
-                        andamento_charge(j,i) = charge_var;
+                        if carica_scarica_ora * x2 + charge_var <= charge_max
+                            E_bat(row_accumulate + j,i) = carica_scarica_ora * x2; %carico
+                            E_grid(row_accumulate + j,i) = - Energy;%prendo dalla rete
+                            Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i) - E_bat(row_accumulate + j,i);
+                            charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
+                            andamento_charge(row_accumulate + j,i) = charge_var;
+                        elseif not(over_bound)
+                            E_bat(row_accumulate + j,i) = carica_scarica_ora * x2; %carico
+                            E_grid(row_accumulate + j,i) = - Energy;%prendo dalla rete
+                            Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i) - E_bat(row_accumulate + j,i);
+                            charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
+                            andamento_charge(row_accumulate + j,i) = charge_var;
+                            over_bound = 1;
+                        else
+                            E_grid(row_accumulate + j,i) = - Energy;%prendo dalla rete
+                            Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);
+                            andamento_charge(row_accumulate + j,i) = charge_var;
+                        end
+
                         
                     elseif Energy < 0 %eccesso di carica
                         if (carica_scarica_ora * x2) < - Energy
-                            %di notte
-                            E_bat(j,i) = carica_scarica_ora * x2;
-                            E_grid(j,i) = - Energy - E_bat(j,i);%residuo
-                            Costo(j,i) = E_grid(j,i);%vendo
-                            charge_var = charge_var + E_bat(j,i);%carico
-                            andamento_charge(j,i) = charge_var;
+                            if carica_scarica_ora * x2 + charge_var <= charge_max
+                                %di notte
+                                E_bat(row_accumulate + j,i) = carica_scarica_ora * x2;
+                                E_grid(row_accumulate + j,i) = - Energy - E_bat(row_accumulate + j,i);%residuo
+                                Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);%vendo
+                                charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                            elseif not(over_bound)
+                                %di notte
+                                E_bat(row_accumulate + j,i) = carica_scarica_ora * x2;
+                                E_grid(row_accumulate + j,i) = - Energy - E_bat(row_accumulate + j,i);%residuo
+                                Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);%vendo
+                                charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                                over_bound = 1;
+                            else
+                                E_grid(row_accumulate + j,i) = - Energy;%
+                                Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);%vendo
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                            end
                         else
-                            %carico batt, quello che rimane lo vendo
-                            E_bat(j,i) = - Energy ;
-                            charge_var = charge_var + E_bat(j,i);%carico
-                            andamento_charge(j,i) = charge_var;
+                            if (- Energy + charge_var) <= charge_max
+                                %
+                                E_bat(row_accumulate + j,i) = - Energy ;
+                                charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                            elseif not(over_bound)
+                                E_bat(row_accumulate + j,i) = - Energy ;
+                                charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                                over_bound = 1;
+                            else
+                                E_grid(row_accumulate + j,i) = - Energy;
+                                Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);%vendo
+                                andamento_charge(row_accumulate + j,i) = charge_var;
+                            end
                         end
                     else
-                        andamento_charge(j,i) = charge_var;
+                        andamento_charge(row_accumulate + j,i) = charge_var;
                     end
                 end
-                if (andamento_charge(j,i) <= charge_min) || (andamento_charge(j,i) >= charge_max)
+                if (charge_var >= charge_min)
+                    under_bound = 0;
+                end
+                if (charge_var <= charge_max)
+                    over_bound = 0;
+                end
+                
+                if (andamento_charge(row_accumulate + j,i) <= charge_min) || (andamento_charge(row_accumulate + j,i) >= charge_max)
                     NVV = NVV + 1;
                 end
             end
-            if charge_var < limite_inf
+            if charge_var < limite_inf 
                 NVV = NVV + 1;
             end
             %disp(int2str(NVV));
-            %disp(int2str(NVV)  + "| " + int2str(x1) + " f " + int2str(x2))
-            if NVV == 0
-                fattore_moltiplicativo = 0.1;
-            else
-                for i=1:NVV
-                    fattore_moltiplicativo = fattore_moltiplicativo * 10;
-                    
-                end
-            end
+            %disp(int2str(NVV)  + "| " + int2str(x(1)) + " f " + int2str(x(2)))
+            
         end
+        row_accumulate = row_accumulate + length(P_load(k).month);
         if k < 12
-            E_load(end+length(P_load(k+1).month), 1:24) = 0;
-            E_pv(end+length(P_load(k+1).month), 1:24) = 0;
-            Costo(end+length(P_load(k+1).month), 1:24) = 0;
-            E_grid(end+length(P_load(k+1).month), 1:24) = 0;
-            andamento_charge(end+length(P_load(k+1).month), 1:24) = 0;
-            E_bat(end+length(P_load(k+1).month), 1:24) = 0;
+            E_load(row_accumulate + length(P_load(k +1).month), 1:24) = 0;
+            E_pv(row_accumulate + length(P_load(k +1).month), 1:24) = 0;
+            Costo(row_accumulate + length(P_load(k +1).month), 1:24) = 0;
+            E_grid(row_accumulate + length(P_load(k +1).month), 1:24) = 0;
+            andamento_charge(row_accumulate + length(P_load(k +1).month), 1:24) = 0;
+            E_bat(row_accumulate + length(P_load(k +1).month), 1:24) = 0;
         end
+        
+        
+        
     end
-    if charge_var < limite_inf 
-        NVV = NVV + 1;
-    end
+
+    
+    
+    
     
     %disp(int2str(NVV));
     %disp(int2str(NVV)  + "| " + int2str(x1) + " f " + int2str(x2))
