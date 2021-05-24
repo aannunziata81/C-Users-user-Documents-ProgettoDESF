@@ -1,10 +1,10 @@
 
 [Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init] = parameter_pass();
 
-Npv = 240;
-Nb = 35;
+Npv = 225;
+Nb = 78;
 deltat = 1;
-[E_carico, E_pannellifoto, E_batteria, E_grid, d, Costo, andamento_charge] = MyFitnessFunctionGridPlusAnnoS(Npv, Nb);
+[E_carico, E_pannellifoto, E_batteria, E_grid, d, Costo, andamento_charge] = MyFitnessFunctionGridPlusAnnolimitS(Npv, Nb);
 
 % figure(1)
 % plot(E_carico(1,:), 'color', 'b')

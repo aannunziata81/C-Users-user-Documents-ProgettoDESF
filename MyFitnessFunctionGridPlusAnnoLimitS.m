@@ -1,4 +1,4 @@
-function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFunctionGridPlusAnnoS(x1, x2)
+function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFunctionGridPlusAnnoLimitS(x1, x2)
     [P_load, P_pv, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init] = parameter_pass();
     up = 1.2;
     down = 0.8;
@@ -45,13 +45,6 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
                                 charge_var = charge_var + E_bat(row_accumulate + j,i);
                                 andamento_charge(row_accumulate + j,i) = charge_var;
                                 Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i); %negativo
-                            elseif not(under_bound)
-                                E_bat(row_accumulate + j,i) = - carica_scarica_ora * x2 * Round_trip_efficiency; %scarico batt
-                                E_grid(row_accumulate + j,i) = - E_bat(row_accumulate + j,i) - Energy;
-                                charge_var = charge_var + E_bat(row_accumulate + j,i);
-                                andamento_charge(row_accumulate + j,i) = charge_var;
-                                Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i); %negativo
-                                under_bound = 1;
                             else
                                 E_grid(row_accumulate + j,i) = - Energy;
                                 andamento_charge(row_accumulate + j,i) = charge_var;
@@ -62,11 +55,6 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
                                 E_bat(row_accumulate + j,i) = - Energy; %prengo dalla batteria
                                 charge_var = charge_var + E_bat(row_accumulate + j,i);
                                 andamento_charge(row_accumulate + j,i) = charge_var;
-                            elseif not(under_bound)
-                                E_bat(row_accumulate + j,i) = - Energy; %prengo dalla batteria
-                                charge_var = charge_var + E_bat(row_accumulate + j,i);
-                                andamento_charge(row_accumulate + j,i) = charge_var;
-                                under_bound = 1;
                             else
                                 E_grid(row_accumulate + j,i) = - Energy;
                                 andamento_charge(row_accumulate + j,i) = charge_var;
@@ -84,11 +72,6 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
                                 E_bat(row_accumulate + j,i) = - Energy;
                                 charge_var = charge_var + E_bat(row_accumulate + j,i);
                                 andamento_charge(row_accumulate + j,i) = charge_var;
-                            elseif not(over_bound)
-                                E_bat(row_accumulate + j,i) = - Energy;
-                                charge_var = charge_var + E_bat(row_accumulate + j,i);
-                                andamento_charge(row_accumulate + j,i) = charge_var;
-                                over_bound = 1;
                             else
                                 E_grid(row_accumulate + j,i) = - Energy;%positivo
                                 Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);
@@ -106,13 +89,6 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
                             Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i) - E_bat(row_accumulate + j,i);
                             charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
                             andamento_charge(row_accumulate + j,i) = charge_var;
-                        elseif not(over_bound)
-                            E_bat(row_accumulate + j,i) = carica_scarica_ora * x2; %carico
-                            E_grid(row_accumulate + j,i) = - Energy;%prendo dalla rete
-                            Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i) - E_bat(row_accumulate + j,i);
-                            charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
-                            andamento_charge(row_accumulate + j,i) = charge_var;
-                            over_bound = 1;
                         else
                             E_grid(row_accumulate + j,i) = - Energy;%prendo dalla rete
                             Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);
@@ -129,14 +105,6 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
                                 Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);%vendo
                                 charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
                                 andamento_charge(row_accumulate + j,i) = charge_var;
-                            elseif not(over_bound)
-                                %di notte
-                                E_bat(row_accumulate + j,i) = carica_scarica_ora * x2;
-                                E_grid(row_accumulate + j,i) = - Energy - E_bat(row_accumulate + j,i);%residuo
-                                Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);%vendo
-                                charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
-                                andamento_charge(row_accumulate + j,i) = charge_var;
-                                over_bound = 1;
                             else
                                 E_grid(row_accumulate + j,i) = - Energy;%
                                 Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);%vendo
@@ -148,11 +116,6 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
                                 E_bat(row_accumulate + j,i) = - Energy ;
                                 charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
                                 andamento_charge(row_accumulate + j,i) = charge_var;
-                            elseif not(over_bound)
-                                E_bat(row_accumulate + j,i) = - Energy ;
-                                charge_var = charge_var + E_bat(row_accumulate + j,i);%carico
-                                andamento_charge(row_accumulate + j,i) = charge_var;
-                                over_bound = 1;
                             else
                                 E_grid(row_accumulate + j,i) = - Energy;
                                 Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);%vendo
@@ -162,12 +125,6 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
                     else
                         andamento_charge(row_accumulate + j,i) = charge_var;
                     end
-                end
-                if (charge_var >= charge_min)
-                    under_bound = 0;
-                end
-                if (charge_var <= charge_max)
-                    over_bound = 0;
                 end
                 
                 if (andamento_charge(row_accumulate + j,i) <= charge_min) || (andamento_charge(row_accumulate + j,i) >= charge_max)

@@ -1,4 +1,4 @@
-function d = MyFitnessFunctionGridPlusAnno(x)
+function d = MyFitnessFunctionGridPlusAnnoLimit(x)
 %caricare le batterie appena possibile
 % x(1) = 19;
 % x(2) = 53;
@@ -19,15 +19,15 @@ function d = MyFitnessFunctionGridPlusAnno(x)
     E_bat(1:24) = 0;
     E_grid(1:24) = 0;
     d = 0;
-    NVV = 0;
+%     NVV = 0;
     
     for k = 1 : 12
  
         for j = 1 : length(P_load(k).month)
-            
+            NVV = 0;
             E_load = P_load(k).month(j,:) * delta_t;
             E_pv = P_pv(k).month(j,:) * x(1) * delta_t;
-%             fattore_moltiplicativo = 1;
+            fattore_moltiplicativo = 1;
             for i = 1 : 24
                 Energy = E_load(i) - E_pv(i);
                 %energy positiva: ho bisogno di carica
@@ -41,13 +41,6 @@ function d = MyFitnessFunctionGridPlusAnno(x)
                                 charge_var = charge_var + E_bat(i);
                                 andamento_charge(i) = charge_var;
                                 Costo(i) = E_grid(i); %negativo
-                            elseif not(under_bound)
-                                E_bat(i) = - carica_scarica_ora * x(2) * Round_trip_efficiency; %scarico batt
-                                E_grid(i) = - E_bat(i) - Energy;
-                                charge_var = charge_var + E_bat(i);
-                                andamento_charge(i) = charge_var;
-                                Costo(i) = E_grid(i); %negativo
-                                under_bound = 1;
                             else
                                 E_grid(i) = - Energy;
                                 andamento_charge(i) = charge_var;
@@ -58,11 +51,6 @@ function d = MyFitnessFunctionGridPlusAnno(x)
                                 E_bat(i) = - Energy; %prendo dalla batteria
                                 charge_var = charge_var + E_bat(i);
                                 andamento_charge(i) = charge_var;
-                            elseif not(under_bound)
-                                E_bat(i) = - Energy; %prendo dalla batteria
-                                charge_var = charge_var + E_bat(i);
-                                andamento_charge(i) = charge_var;
-                                under_bound = 1;
                             else
                                 E_grid(i) = - Energy;
                                 andamento_charge(i) = charge_var;
@@ -80,11 +68,6 @@ function d = MyFitnessFunctionGridPlusAnno(x)
                                 E_bat(i) = - Energy;
                                 charge_var = charge_var + E_bat(i);
                                 andamento_charge(i) = charge_var;
-                            elseif not(over_bound)
-                                E_bat(i) = - Energy;
-                                charge_var = charge_var + E_bat(i);
-                                andamento_charge(i) = charge_var;
-                                over_bound = 1;
                             else
                                 E_grid(i) = - Energy;%positivo
                                 Costo(i) = E_grid(i);
@@ -102,13 +85,6 @@ function d = MyFitnessFunctionGridPlusAnno(x)
                             Costo(i) = E_grid(i) - E_bat(i);
                             charge_var = charge_var + E_bat(i);%carico
                             andamento_charge(i) = charge_var;
-                        elseif not(over_bound)
-                            E_bat(i) = carica_scarica_ora * x(2); %carico
-                            E_grid(i) = - Energy;%prendo dalla rete
-                            Costo(i) = E_grid(i) - E_bat(i);
-                            charge_var = charge_var + E_bat(i);%carico
-                            andamento_charge(i) = charge_var;
-                            over_bound = 1;
                         else
                             E_grid(i) = - Energy;%prendo dalla rete
                             Costo(i) = E_grid(i);
@@ -125,14 +101,6 @@ function d = MyFitnessFunctionGridPlusAnno(x)
                                 Costo(i) = E_grid(i);%vendo
                                 charge_var = charge_var + E_bat(i);%carico
                                 andamento_charge(i) = charge_var;
-                            elseif not(over_bound)
-                                %di notte
-                                E_bat(i) = carica_scarica_ora * x(2);
-                                E_grid(i) = - Energy - E_bat(i);%residuo
-                                Costo(i) = E_grid(i);%vendo
-                                charge_var = charge_var + E_bat(i);%carico
-                                andamento_charge(i) = charge_var;
-                                over_bound = 1;
                             else
                                 E_grid(i) = - Energy;%
                                 Costo(i) = E_grid(i);%vendo
@@ -144,11 +112,6 @@ function d = MyFitnessFunctionGridPlusAnno(x)
                                 E_bat(i) = - Energy ;
                                 charge_var = charge_var + E_bat(i);%carico
                                 andamento_charge(i) = charge_var;
-                            elseif not(over_bound)
-                                E_bat(i) = - Energy ;
-                                charge_var = charge_var + E_bat(i);%carico
-                                andamento_charge(i) = charge_var;
-                                over_bound = 1;
                             else
                                 E_grid(i) = - Energy;
                                 Costo(i) = E_grid(i);%vendo
@@ -159,13 +122,6 @@ function d = MyFitnessFunctionGridPlusAnno(x)
                         andamento_charge(i) = charge_var;
                     end
                 end
-                if (charge_var >= charge_min)
-                    under_bound = 0;
-                end
-                if (charge_var <= charge_max)
-                    over_bound = 0;
-                end
-                
                 if (andamento_charge(i) <= charge_min) || (andamento_charge(i) >= charge_max)
                     NVV = NVV + 1;
                 end
@@ -175,25 +131,25 @@ function d = MyFitnessFunctionGridPlusAnno(x)
             end
             %disp(int2str(NVV));
             %disp(int2str(NVV)  + "| " + int2str(x(1)) + " f " + int2str(x(2)))
-%                 if NVV == 0
-%                     fattore_moltiplicativo = 0.1;
-%                 else
-%                     for i=1:NVV
-%                         fattore_moltiplicativo = fattore_moltiplicativo * 10;
-% 
-%                     end
-%                 end
+                if NVV == 0
+                    fattore_moltiplicativo = 0.1;
+                else
+                    for i=1:NVV
+                        fattore_moltiplicativo = fattore_moltiplicativo * 10;
+
+                    end
+                end
 
 
-%                 delta_E = (E_pv + E_bat + E_grid) - E_load;
+                delta_E = (E_pv + E_bat + E_grid) - E_load;
 %                 d = d + sqrt(sum(delta_E.^2)) * NVV;
 
 
             
 
-%             d = d + sqrt(sum(delta_E.^2)) * fattore_moltiplicativo;
+                d = d + sqrt(sum(delta_E.^2)) * fattore_moltiplicativo;
         end
     end
-    d = NVV;
+%     d = NVV;
     %disp(['distance:'  int2str(d) ' , ' int2str(x(1)) ' - ' int2str(x(2))])
 end

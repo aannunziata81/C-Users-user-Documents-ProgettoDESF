@@ -54,7 +54,13 @@ profilo_novembre_2020 = file_profilo_carico.profilo_carico_novembre;
 profilo_dicembre_2020 = file_profilo_carico.profilo_carico_dicembre;
 
 % Consumo annuo del carico
-profilo_carico_anno2020 = sum(sum(profilo_gennaio_2020)) + sum(sum(profilo_febbraio_2020)) + sum(sum(profilo_marzo_2020)) + sum(sum(profilo_aprile_2020)) + sum(sum(profilo_maggio_2020)) + sum(sum(profilo_giugno_2020)) + sum(sum(profilo_luglio_2020)) + sum(sum(profilo_agosto_2020)) + sum(sum(profilo_settembre_2020)) + sum(sum(profilo_ottobre_2020)) + sum(sum(profilo_novembre_2020)) + sum(sum(profilo_dicembre_2020));
+profilo_carico_anno2020 = sum(sum(profilo_gennaio_2020))...
+    + sum(sum(profilo_febbraio_2020)) + sum(sum(profilo_marzo_2020))...
+    + sum(sum(profilo_aprile_2020)) + sum(sum(profilo_maggio_2020))...
+    + sum(sum(profilo_giugno_2020)) + sum(sum(profilo_luglio_2020))...
+    + sum(sum(profilo_agosto_2020)) + sum(sum(profilo_settembre_2020))...
+    + sum(sum(profilo_ottobre_2020)) + sum(sum(profilo_novembre_2020))...
+    + sum(sum(profilo_dicembre_2020));
 
 profilo_carico_2020(1).month = file_profilo_carico.profilo_carico_gennaio;
 profilo_carico_2020(2).month = file_profilo_carico.profilo_carico_febbraio;
@@ -191,7 +197,7 @@ SOC_init = SOCinit;
 
 % Problem Definition
 
-problem.ObjectiveFunction = @(x) MyFitnessFunctionGridPlusAnno(x);
+problem.ObjectiveFunction = @(x) MyFitnessFunctionGridPlusAnnoLimit(x);
 problem.nVar = 2;
 problem.VarMin = [1 1];
 problem.VarMax = [8000 1000];
