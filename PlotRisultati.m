@@ -20,9 +20,9 @@ s = 1;
 % chargeInit =  capacita_batteria * Nb * SOC_init;
 % chargeMax = ;
 % chargeMin(1:24) = capacita_batteria * Nb * SOC_m;
-ore = {'1', '', '', '', '', '', '', '', '', '', '', '',...
-'', '', '', '', '', '', '', '', '', '', '', '24'};
+
 stringa =[ "Febbraio", "Maggio", "Ottobre"];
+strrr = [ "Feb", "Mag", "Ott"];
 for i = [2 5 10]
     clear y_bat y_load y_pv
     lunghezza = 0;
@@ -53,9 +53,15 @@ for i = [2 5 10]
     hold on
     plot(y_load)
     plot(y_pv)
+    w = 0;
+    for aa = 1:7
+        
+        set(gca,'xtick',(1+w):24*7,...
+            'xticklabel', {'1', '', '', '', '', '', '', '', '', '', '', [int2str(aa) strrr(s)],...
+            '', '', '', '', '', '', '', '', '', '', '', '24'});
+        w = 24*aa;
+    end
     s = s + 1;
-    set(gca,'xtick',1:24*7,...
-        'xticklabel', ore);
 end
 
 %%set(gca,'xtick',1:24,...
@@ -71,8 +77,7 @@ for i = [2 5 10]
     end
     
  	figure('Name',stringa(s),'NumberTitle','off');
-    in = 0;
-    
+        
     %subplot(1,1,i)
     in = 0;
     %fin = 24;
