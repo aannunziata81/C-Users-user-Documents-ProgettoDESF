@@ -1,30 +1,20 @@
 
-[Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init] = parameter_pass();
+[Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init, fasce_orarie_2020, prezzo_vendita_energia_elettrica] = parameter_pass();
 
-Npv = 225;
-Nb = 78;
+Npv = 212;
+Nb = 23;
 deltat = 1;
 [E_carico, E_pannellifoto, E_batteria, E_grid, d, Costo, andamento_charge] = MyFitnessFunctionGridPlusAnnoLimitS(Npv, Nb);
 
-% figure(1)
-% plot(E_carico(1,:), 'color', 'b')
-% hold on
-% plot(E_pannellifoto(1,:), 'color', 'r')
-% plot(E_batteria(1,:),'color', 'g')
-% title('Caratteristiche Energia batterie - Energia carico - Energia PV ')
-% legend('Energy load','Energy pv','Energy battery')
-% xlabel('Time [hour]');
-% ylabel('Energy [KWh]');
-% grid on 
 s = 1;
 % chargeInit =  capacita_batteria * Nb * SOC_init;
 % chargeMax = ;
 % chargeMin(1:24) = capacita_batteria * Nb * SOC_m;
 
 stringa =[ "Febbraio", "Maggio", "Ottobre"];
-strrr = [ "Feb", "Mag", "Ott"];
+periodi = ["intermedio", "basso","alto" ];
 for i = [2 5 10]
-    clear y_bat y_load y_pv
+    clear y_bat y_load y_pv t
     lunghezza = 0;
     for f = 1:(i-1)
         lunghezza = lunghezza + length(Pl(f).month);
@@ -48,29 +38,25 @@ for i = [2 5 10]
         in = in + 1;
         
     end
-    
-    plot(y_bat)
+    t = datetime(2020,i,01,01,00,00):minutes(60):datetime(2020,i,01)+hours(168);
     hold on
-    plot(y_load)
-    plot(y_pv)
-    w = 0;
-    for aa = 1:7
-        
-        set(gca,'xtick',(1+w):24*7,...
-            'xticklabel', {'1', '', '', '', '', '', '', '', '', '', '', [int2str(aa) strrr(s)],...
-            '', '', '', '', '', '', '', '', '', '', '', '24'});
-        w = 24*aa;
-    end
+    plot(t,y_load,'color', 'g')
+    plot(t,y_pv, 'color', 'r')
+    plot(t,y_bat, 'color', 'b')
+    title('Caratteristiche Energia batterie - Energia carico - Energia PV del periodo a consumo '+ periodi(s))
+    legend('Energy load','Energy pv','Energy battery')
+    xlabel('Date [day-month-year hour:minute]');
+    ylabel('Energy [KWh]');
+    grid on
+    xticks([t(12) t(36) t(60) t(84) t(108) t(132) t(156)])
+    xtickformat('dd-MMM-yyyy HH:mm')
     s = s + 1;
 end
-
-%%set(gca,'xtick',1:24,...
-%          'xticklabel',ore);
 
 s = 1;
 
 for i = [2 5 10]
-    clear y_and
+    clear y_and t
     lunghezza = 0;
     for f = 1:(i-1)
         lunghezza = lunghezza + length(Pl(f).month);
@@ -101,32 +87,59 @@ for i = [2 5 10]
     chargeMax(1:24*7) = capacita_batteria * Nb * SOC_M;
     chargeMin(1:24*7) = capacita_batteria * Nb * SOC_m;
     chargeInit(1:24*7) =  capacita_batteria * Nb * SOC_init;
-    s = s + 1;
-    plot(chargeMax, 'color', 'r','LineWidth',2)
-    hold on
-    plot(chargeMin,'color', 'r','LineWidth',2)
-    plot(chargeInit,'color', [0.9290 0.6940 0.1250])
-    plot(y_and, 'color', [0.592, 0.2313 0.8156],'LineWidth',1.5)
+   
     
-    set(gca,'xtick',1:24*7,...
-        'xticklabel', ore);
+    t = datetime(2020,i,01,01,00,00):minutes(60):datetime(2020,i,01)+hours(168);
+    plot(t, chargeMax, 'color', 'r','LineWidth',2)
+    hold on
+    plot(t, chargeMin,'color', 'r','LineWidth',2)
+    plot(t, chargeInit,'color', [0.9290 0.6940 0.1250])
+    plot(t, y_and, 'color', [0.592, 0.2313 0.8156],'LineWidth',1.5)
+    title('Andamento batterie prima settimana di ' + stringa(s))
+    legend('Charge max','Charge min','Charge init','Andamento carica')
+    xlabel('Date [day-month-year hour:minute]');
+    ylabel('Capacity of battery [KWh]');
+    xticks([t(12) t(36) t(60) t(84) t(108) t(132) t(156)])
+    xtickformat('dd-MMM-yyyy HH:mm')
+    s = s + 1;
 end
-
-
-
-% figure(2)
-% 
-% plot(1:24, chargeMax, 'color', 'r','LineWidth',2)
-% hold on
-% plot(1:24, chargeMin,'color', 'r','LineWidth',2)
-% plot(1:24, chargeInit,'color', [0.9290 0.6940 0.1250])
-% plot(1:24, andamento_carica, 'color', [0.592, 0.2313 0.8156],'LineWidth',1.5)
-% title('Andamento batterie 24h')
-% legend( 'Charge max','Charge min','Charge init','Andamento carica')
-% xlabel('Time [hour]');
-% ylabel('Capacity of battery [KWh]');
-% grid on
-% figure(3)
-% plot (1:24, Costo)
-% ylabel('Energia')
-% grid on
+temp = 0;
+for m = 1:12
+    for g = 1:length(Pl(m).month)
+        for z = 1:24
+            if andamento_charge(g + temp, z) > 0
+                guadagno(g + temp, z) = andamento_charge(g + temp, z)* prezzo_vendita_energia_elettrica;
+            else
+                guadagno(g + temp, z) = andamento_charge(g + temp, z)* prezzo_vendita_energia_elettrica;
+            end
+            
+        end
+    end
+    temp = temp + length(Pl(m).month);
+end
+s = 1;
+for i = [2 5 10]
+    clear y_and t
+    lunghezza = 0;
+    for f = 1:(i-1)
+        lunghezza = lunghezza + length(Pl(f).month);
+    end
+    figure('Name',stringa(s),'NumberTitle','off');
+    in = 0;
+    h = 24;
+    for j = 1:7
+        for kk = 1:24
+            y_costi(kk + h*in) = Costo(lunghezza + j,kk);
+        end
+        in = in + 1;
+    end
+    
+    
+    title('Andamento costi del mese di ' + stringa(s))
+    s = s +1;
+    t = datetime(2020,i,01,01,00,00):minutes(60):datetime(2020,i,01)+hours(168);
+    plot(t, y_costi)
+    xticks([t(12) t(36) t(60) t(84) t(108) t(132) t(156)])
+    xtickformat('HH:mm')
+    
+end

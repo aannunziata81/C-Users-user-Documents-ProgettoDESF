@@ -152,19 +152,18 @@ SOCinit = 50 / 100;
 % Vendita e Acquisto
 prezzo_vendita_energia_elettrica = 0.04018;
 file_fasce_orarie = load('fasceorarie');
-fasce_orarie_gennaio = file_fasce_orarie.fasceorariegennaio;
-fasce_orarie_febbraio = file_fasce_orarie.fasceorariefebbraio;
-fasce_orarie_marzo = file_fasce_orarie.fasceorariemarzo;
-fasce_orarie_aprile = file_fasce_orarie.fasceorarieaprile;
-fasce_orarie_maggio = file_fasce_orarie.fasceorariemaggio;
-fasce_orarie_giugno = file_fasce_orarie.fasceorariegiugno;
-fasce_orarie_luglio = file_fasce_orarie.fasceorarieluglio;
-fasce_orarie_agosto = file_fasce_orarie.fasceorarieagosto;
-fasce_orarie_settembre = file_fasce_orarie.fasceorariesettembre;
-fasce_orarie_ottobre = file_fasce_orarie.fasceorarieottobre;
-fasce_orarie_novembre = file_fasce_orarie.fasceorarienovembre;
-fasce_orarie_dicembre = file_fasce_orarie.fasceorariedicembre;
-
+fasce_orarie_2020(1).month = file_fasce_orarie.fasceorariegennaio;
+fasce_orarie_2020(2).month = file_fasce_orarie.fasceorariefebbraio;
+fasce_orarie_2020(3).month = file_fasce_orarie.fasceorariemarzo;
+fasce_orarie_2020(4).month = file_fasce_orarie.fasceorarieaprile;
+fasce_orarie_2020(5).month = file_fasce_orarie.fasceorariemaggio;
+fasce_orarie_2020(6).month = file_fasce_orarie.fasceorariegiugno;
+fasce_orarie_2020(7).month = file_fasce_orarie.fasceorarieluglio;
+fasce_orarie_2020(8).month = file_fasce_orarie.fasceorarieagosto;
+fasce_orarie_2020(9).month = file_fasce_orarie.fasceorariesettembre;
+fasce_orarie_2020(10).month = file_fasce_orarie.fasceorarieottobre;
+fasce_orarie_2020(11).month = file_fasce_orarie.fasceorarienovembre;
+fasce_orarie_2020(12).month = file_fasce_orarie.fasceorariedicembre;
 
 
 %----------------------Inverter------------------------
@@ -183,16 +182,17 @@ potenza_nominale_inveter = 900 * 670;
 
 %%-----------------------Parameters----------------------
 
-global P_pv P_load Round_trip carica_scarica Cap_batteria SOC_min SOC_max SOC_init
+global P_pv P_load Round_trip carica_scarica Cap_batteria SOC_min SOC_max SOC_init fasce_orarie2020 prezzo_vendita
 P_pv = Potenza_PV_2020;
 P_load = profilo_carico_2020;
-fasce = fasce_orarie_gennaio(1, :);
 Round_trip = Round_trip_efficiency;
 carica_scarica = carica_scarica_ora;
 Cap_batteria = Capacita_Batteria;
 SOC_min = SOCmin;
 SOC_max = SOCmax;
 SOC_init = SOCinit;
+fasce_orarie2020 = fasce_orarie_2020;
+prezzo_vendita = prezzo_vendita_energia_elettrica;
 %%---------------------------Optimization Algorithm------
 
 % Problem Definition
