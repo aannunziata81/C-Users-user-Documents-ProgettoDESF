@@ -15,7 +15,7 @@ function d = MyFitnessFunctionGridPlusAnnoLimit(x)
 
     charge_var = charge_init;
     andamento_charge(1:24) = 0;
-    Costo(1:24) = 0;
+    Costo(1:24) = 0;%kW
     E_bat(1:24) = 0;
     E_grid(1:24) = 0;
     d = 0;

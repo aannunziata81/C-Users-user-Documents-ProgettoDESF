@@ -1,8 +1,8 @@
 
 [Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init, fasce_orarie_2020, prezzo_vendita_energia_elettrica] = parameter_pass();
 
-Npv = 212;
-Nb = 23;
+Npv = 252;
+Nb = 68;
 deltat = 1;
 [E_carico, E_pannellifoto, E_batteria, E_grid, d, Costo, andamento_charge] = MyFitnessFunctionGridPlusAnnoLimitS(Npv, Nb);
 
@@ -104,19 +104,25 @@ for i = [2 5 10]
     s = s + 1;
 end
 temp = 0;
+ricavo_annuale = 0;
+acquisto_annuale = 0;
 for m = 1:12
     for g = 1:length(Pl(m).month)
         for z = 1:24
-            if andamento_charge(g + temp, z) > 0
-                guadagno(g + temp, z) = andamento_charge(g + temp, z)* prezzo_vendita_energia_elettrica;
+            if Costo(g + temp, z) > 0
+                guadagno(g + temp, z) = Costo(g + temp, z)* prezzo_vendita_energia_elettrica;
+                ricavo_annuale = ricavo_annuale + guadagno(g + temp, z);
             else
-                guadagno(g + temp, z) = andamento_charge(g + temp, z)* prezzo_vendita_energia_elettrica;
+                guadagno(g + temp, z) = Costo(g + temp, z)* fasce_orarie_2020(m).month(g,z);
+                acquisto_annuale = acquisto_annuale + guadagno(g + temp, z);
             end
             
         end
     end
     temp = temp + length(Pl(m).month);
 end
+
+
 s = 1;
 for i = [2 5 10]
     clear y_and t
@@ -135,11 +141,12 @@ for i = [2 5 10]
     end
     
     
-    title('Andamento costi del mese di ' + stringa(s))
-    s = s +1;
+    
+    
     t = datetime(2020,i,01,01,00,00):minutes(60):datetime(2020,i,01)+hours(168);
     plot(t, y_costi)
+    title('Andamento costi del mese di ' + stringa(s))
     xticks([t(12) t(36) t(60) t(84) t(108) t(132) t(156)])
     xtickformat('HH:mm')
-    
+    s = s +1;
 end
