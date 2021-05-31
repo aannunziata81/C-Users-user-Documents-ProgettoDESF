@@ -3,7 +3,7 @@ clear all, clc, close all
 
 %% Vettore giornata
 ore = 0 : 23;
-delta_t = 1   %ora
+delta_t = 1;   %ora
 
 %------------------Soleggiamento--------------------
 % Soleggiamento Anno 2020 (W/m^2)
@@ -217,13 +217,19 @@ params.gamma = 0.1;
 out = RunGA(problem, params);
 
 % Results
-figure;
-%plot(out.bestcost, 'LineWidth', 2);
-%semilogy(out.bestcost, 'LineWidth', 2);
 plot(out.bestcost,'LineWidth', 2);
 xlabel('Iterations');
 ylabel('Best Cost');
+title('Andamento della funzione di costo')
 grid on;
+figure;
+plot(out.pannelli,'*');
+hold on
+plot(out.batterie,'*');
+xlabel('Iterazioni');
+ylabel('Unità');
+title('Andamento delle soluzioni migliori')
+legend('Numero di pannelli', 'Numero di batterie')
 
 
 

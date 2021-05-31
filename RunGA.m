@@ -4,7 +4,8 @@ ObjectiveFunction = problem.ObjectiveFunction;
 nVar = problem.nVar;
 VarMin = problem.VarMin;
 VarMax = problem.VarMax;
-
+pannelli = [];
+batteria = [];
 VarSize = [1, nVar];
 % Params
 MaxIt = params.MaxIt;
@@ -106,10 +107,12 @@ for it = 1:MaxIt
         
         %disp('mutate ' + num2str(popc(m).Position))
         
-        % Compare Solution to Best Solution Ever Found
+       
         %             if (popc(l).Cost < bestsol.Cost & NVV_temp < 20 )
         %                 bestsol = popc(l);
         %             end
+        
+        % Compare Solution to Best Solution Ever Found
         if popc(m).Cost < bestsol.Cost
             bestsol = popc(m);
         end
@@ -125,6 +128,9 @@ for it = 1:MaxIt
     % Update Best Cost of Iteration
     bestcost(it) = bestsol.Cost;
     
+    pannelli(it) = bestsol.Position(1);
+    batterie(it) = bestsol.Position(2);
+    
     % Display Itertion Information
     disp(['Iteration ' num2str(it) ': Best Cost = ' num2str(bestcost(it)) ' - ' num2str(bestsol.Position(1)) ' | ' num2str(bestsol.Position(2))]);
     
@@ -137,5 +143,7 @@ out.pop = pop;
 %bestsol.Cost = round(bestsol.Cost);
 out.bestsol = bestsol;
 out.bestcost = bestcost;
+out.pannelli = pannelli;
+out.batterie = batterie;
 disp(bestsol);
 end
