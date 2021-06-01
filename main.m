@@ -223,28 +223,20 @@ ylabel('Best Cost');
 title('Andamento della funzione di costo')
 grid on;
 figure;
-plot(out.pannelli,'*');
-hold on
-plot(out.batterie,'*');
+subplot(2, 1, 1)
+plot(out.pannelli,'*', 'color', 'r');
 xlabel('Iterazioni');
 ylabel('Unità');
-title('Andamento delle soluzioni migliori')
-legend('Numero di pannelli', 'Numero di batterie')
-
-
-
-
-
-
-
-
-
-
-
+title('Andamento del numero di pannelli')
+subplot(2, 1, 2)
+plot(out.batterie,'*', 'color', 'b');
+xlabel('Iterazioni');
+ylabel('Unità');
+title('Andamento del numero di batterie')
 
 
 %----------------------Pale eolica---------------------
-
+%vento_2020
 
 
 
