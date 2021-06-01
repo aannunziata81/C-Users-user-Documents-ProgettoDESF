@@ -237,6 +237,7 @@ title('Andamento del numero di batterie')
 
 %----------------------Pale eolica---------------------
 %vento_2020
+file_vento = load('vento_2020');
 
 
 
