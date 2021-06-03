@@ -236,8 +236,10 @@ title('Andamento del numero di batterie')
 
 
 %----------------------Pale eolica---------------------
-%vento_2020
-file_vento = load('vento_2020');
+%Aeolos-V wind turbine 10kW 
+%13.000 €
+
+file_vento = load('vento_2020');%vento_2020
 
 
 
