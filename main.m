@@ -200,7 +200,7 @@ prezzo_vendita = prezzo_vendita_energia_elettrica;
 problem.ObjectiveFunction = @(x) MyFitnessFunctionGridPlusAnnoLimit(x);
 problem.nVar = 2;
 problem.VarMin = [1 1];
-problem.VarMax = [8000 1000];
+problem.VarMax = [5000 200];
 
 
 % GA Parameters
@@ -235,11 +235,43 @@ ylabel('Unità');
 title('Andamento del numero di batterie')
 
 
-%----------------------Pale eolica---------------------
+%----------------------Pale eolica-------------------------
 %Aeolos-V wind turbine 10kW 
 %13.000 €
 
-file_vento = load('vento_2020');%vento_2020
+file_vento = load('Eolico');
+global P_wind
+P_wind = file_vento.Potenza_eolico.*100;
 
+% Problem Definition ---RunGAs
+clear problem out
+problem.ObjectiveFunction = @(x) MyFitnessFunctionWind(x);
+problem.nVar = 3;
+problem.VarMin = [1 1 1];
+problem.VarMax = [5000 200 200];
+out = RunGAs(problem, params);
+
+figure(12)
+plot(out.bestcost,'LineWidth', 2);
+xlabel('Iterations');
+ylabel('Best Cost');
+title('Andamento della funzione di costo')
+grid on;
+figure(13);
+subplot(3, 1, 1)
+plot(out.pannelli,'*', 'color', 'r');
+xlabel('Iterazioni');
+ylabel('Unità');
+title('Andamento del numero di pannelli')
+subplot(3, 1, 2)
+plot(out.batterie,'*', 'color', 'b');
+xlabel('Iterazioni');
+ylabel('Unità');
+title('Andamento del numero di batterie')
+subplot(3, 1, 3)
+plot(out.pale,'*', 'color', 'g');
+xlabel('Iterazioni');
+ylabel('Unità');
+title('Andamento del numero di pale eoliche')
 
 
