@@ -135,8 +135,6 @@ Round_trip_efficiency = 0.9;
 Capacita_Batteria = 14;      %KWh
 DOD = 1;
 
-
-
 % Range di mantenimento dello stato di carica
 % SOC - stato di carica
 SOCmax = 90 / 100; 

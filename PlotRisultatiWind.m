@@ -1,17 +1,13 @@
 
 [Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init, fasce_orarie_2020, prezzo_vendita_energia_elettrica] = parameter_pass();
 
-Npv = 973;
-Nb = 97;
-Np = 3;
+Npv = 191;
+Nb = 90;
+Np = 1;
 deltat = 1;
 [E_carico, E_pannellifoto, E_batteria, E_grid, d, Costo, andamento_charge, E_wind] = MyFitnessFunctionGridPlusAnnoLimitWindS(Npv, Nb, Np);
 
 s = 1;
-% chargeInit =  capacita_batteria * Nb * SOC_init;
-% chargeMax = ;
-% chargeMin(1:24) = capacita_batteria * Nb * SOC_m;
-
 stringa =[ "Febbraio", "Maggio", "Ottobre"];
 periodi = ["intermedio", "basso","alto" ];
 for i = [2 5 10]

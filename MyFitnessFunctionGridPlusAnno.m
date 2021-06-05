@@ -175,20 +175,6 @@ function d = MyFitnessFunctionGridPlusAnno(x)
             end
             %disp(int2str(NVV));
             %disp(int2str(NVV)  + "| " + int2str(x(1)) + " f " + int2str(x(2)))
-%                 if NVV == 0
-%                     fattore_moltiplicativo = 0.1;
-%                 else
-%                     for i=1:NVV
-%                         fattore_moltiplicativo = fattore_moltiplicativo * 10;
-% 
-%                     end
-%                 end
-
-
-%                 delta_E = (E_pv + E_bat + E_grid) - E_load;
-%                 d = d + sqrt(sum(delta_E.^2)) * NVV;
-
-
             
 
 %             d = d + sqrt(sum(delta_E.^2)) * fattore_moltiplicativo;

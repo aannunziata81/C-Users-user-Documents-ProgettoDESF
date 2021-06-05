@@ -20,24 +20,20 @@ gamma = params.gamma;
 % Template for Empty Individuals
 empty_individual.Position = [];
 empty_individual.Cost = [];
-%empty_individual.NVV = [];
 
 % Best Solution Ever Found
 bestsol.Cost = inf;
-%bestNVV = inf;
+
 % Initialization
 pop = repmat(empty_individual, nPop, 1);
 for i = 1 : nPop
     
     
     % Generate Random Solution
-    %         pop(i).Position = unifrnd(VarMin, VarMax, VarSize);
-    
+        
     pop(i).Position(1) = randi([VarMin(1) VarMax(1)], 1);
     pop(i).Position(2) = randi([VarMin(2) VarMax(2)], 1);
     
-    % NVV - vincoli violati
-    %pop(i).NVV = MyFitnessFunctionS(pop(i).Position(1), pop(i).Position(2));
     
     % Evaluate Solution
     pop(i).Cost = round(ObjectiveFunction(pop(i).Position));
@@ -97,21 +93,12 @@ for it = 1:MaxIt
         popc(m).Position = min(popc(m).Position, VarMax);
         
         %disp("mutate " + num2str(popc(m).Position(1)) + ' | ' + num2str(popc(m).Position(2)))
-        % NVV
-        %popc(m).NVV = MyFitnessFunctionS(popc(m).Position(1), popc(m).Position(2));
-        
+                
         % Evaluation
         popc(m).Cost = round(ObjectiveFunction(popc(m).Position));
         %disp("costo: " + int2str(popc(m).Cost))
-        %NVV_temp = popc(i).NVV;
-        
         %disp('mutate ' + num2str(popc(m).Position))
-        
-       
-        %             if (popc(l).Cost < bestsol.Cost & NVV_temp < 20 )
-        %                 bestsol = popc(l);
-        %             end
-        
+                
         % Compare Solution to Best Solution Ever Found
         if popc(m).Cost < bestsol.Cost
             bestsol = popc(m);
@@ -139,8 +126,6 @@ end
 
 % Results
 out.pop = pop;
-%bestsol.Position = round(bestsol.Position);
-%bestsol.Cost = round(bestsol.Cost);
 out.bestsol = bestsol;
 out.bestcost = bestcost;
 out.pannelli = pannelli;
