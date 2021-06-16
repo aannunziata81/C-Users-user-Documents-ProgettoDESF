@@ -10,8 +10,8 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge, E_wind] = MyF
     charge_init = charge * SOC_init; 
     %limite_sup = charge_init * up;
     limite_inf = charge_init * down;
-    E_load = P_load(1).month(1,:) * delta_t;
-    E_pv = P_pv(1).month(1,:) * x1 * delta_t;
+    %E_load = P_load(1).month(1,:) * delta_t;
+    %E_pv = P_pv(1).month(1,:) * x1 * delta_t;
     charge_var = charge_init;    
     %i=8,9,10,11,12,13,14,15,16,17,18 fascia F1
     %i=7,19,20,21,22 fascia F2
@@ -149,12 +149,8 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge, E_wind] = MyF
             E_bat(row_accumulate + length(P_load(k + 1).month), 1:24) = 0;
         end
         
-        
-        
     end
 
-   
-    
     %disp(int2str(NVV));
     %disp(int2str(NVV)  + "| " + int2str(x1) + " f " + int2str(x2))
    

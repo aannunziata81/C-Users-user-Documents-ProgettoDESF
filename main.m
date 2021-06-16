@@ -34,9 +34,9 @@ soleggiamento_anno2020 = (sum(sum(sol_gennaio_2020)) + sum(sum(sol_febbraio_2020
 % Genova Stazione Funzionale
 
 % Profilo del carico nei diversi periodi
-% Alto consumo Ott - Gen
-% Intermedio consumo Feb - Apr e Lug - Set
-% Basso consumo Mag - Giu
+% Alto consumo Ott Nov Dic Gen
+% Intermedio consumo Feb Mar Apr e Lug Ago Set
+% Basso consumo Mag Giu
 
 % Potenza misurata in KW
 file_profilo_carico = load('profilo_carico2020');
@@ -52,6 +52,7 @@ profilo_settembre_2020 = file_profilo_carico.profilo_carico_settembre;
 profilo_ottobre_2020 = file_profilo_carico.profilo_carico_ottobre;
 profilo_novembre_2020 = file_profilo_carico.profilo_carico_novembre;
 profilo_dicembre_2020 = file_profilo_carico.profilo_carico_dicembre;
+
 
 % Consumo annuo del carico
 profilo_carico_anno2020 = sum(sum(profilo_gennaio_2020))...
@@ -76,6 +77,18 @@ profilo_carico_2020(11).month = file_profilo_carico.profilo_carico_novembre;
 profilo_carico_2020(12).month = file_profilo_carico.profilo_carico_dicembre;
 
 
+profilo_carico_2020_invertito(1).month = file_profilo_carico.profilo_carico_gennaio;
+profilo_carico_2020_invertito(2).month = file_profilo_carico.profilo_carico_febbraio;
+profilo_carico_2020_invertito(3).month = file_profilo_carico.profilo_carico_maggio;
+profilo_carico_2020_invertito(4).month = file_profilo_carico.profilo_carico_giugno;
+profilo_carico_2020_invertito(5).month = file_profilo_carico.profilo_carico_maggio;
+profilo_carico_2020_invertito(6).month = file_profilo_carico.profilo_carico_giugno;
+profilo_carico_2020_invertito(7).month = file_profilo_carico.profilo_carico_maggio;
+profilo_carico_2020_invertito(8).month = file_profilo_carico.profilo_carico_maggio;
+profilo_carico_2020_invertito(9).month = file_profilo_carico.profilo_carico_giugno;
+profilo_carico_2020_invertito(10).month = file_profilo_carico.profilo_carico_ottobre;
+profilo_carico_2020_invertito(11).month = file_profilo_carico.profilo_carico_novembre;
+profilo_carico_2020_invertito(12).month = file_profilo_carico.profilo_carico_dicembre;
 
 %-----------------Pannelli Fotovoltaici----------------
 % Pannelli fotovoltaici - Modello: Vertex TSM-DE21 635-670
@@ -198,7 +211,7 @@ prezzo_vendita = prezzo_vendita_energia_elettrica;
 problem.ObjectiveFunction = @(x) MyFitnessFunctionGridPlusAnnoLimit(x);
 problem.nVar = 2;
 problem.VarMin = [1 1];
-problem.VarMax = [5000 200];
+problem.VarMax = [4000 200];
 
 
 % GA Parameters
@@ -233,20 +246,20 @@ ylabel('Unità');
 title('Andamento del numero di batterie')
 
 
-%----------------------Pale eolica-------------------------
+%----------------------Pale eoliche-------------------------
 %Aeolos-V wind turbine 10kW 
 %13.000 €
 
 file_vento = load('Eolico');
 global P_wind
-P_wind = file_vento.Potenza_eolico.*100;
+P_wind = file_vento.Potenza_eolico;
 
 % Problem Definition ---RunGAs
 clear problem out
 problem.ObjectiveFunction = @(x) MyFitnessFunctionWind(x);
 problem.nVar = 3;
 problem.VarMin = [1 1 1];
-problem.VarMax = [5000 200 200];
+problem.VarMax = [4000 200 200];
 out = RunGAs(problem, params);
 
 figure(12)

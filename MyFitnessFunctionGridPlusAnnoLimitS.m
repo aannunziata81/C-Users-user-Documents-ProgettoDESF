@@ -153,9 +153,6 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge] = MyFitnessFu
     end
 
     
-    
-    
-    
     %disp(int2str(NVV));
     %disp(int2str(NVV)  + "| " + int2str(x1) + " f " + int2str(x2))
    

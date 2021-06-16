@@ -1,9 +1,8 @@
-
 [Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init, fasce_orarie_2020, prezzo_vendita_energia_elettrica] = parameter_pass();
 
-Npv = 191;
-Nb = 90;
-Np = 1;
+Npv = 464;
+Nb = 148;
+Np = 60;
 deltat = 1;
 [E_carico, E_pannellifoto, E_batteria, E_grid, d, Costo, andamento_charge, E_wind] = MyFitnessFunctionGridPlusAnnoLimitWindS(Npv, Nb, Np);
 
@@ -87,7 +86,6 @@ for i = [2 5 10]
     chargeMin(1:24*7) = capacita_batteria * Nb * SOC_m;
     chargeInit(1:24*7) =  capacita_batteria * Nb * SOC_init;
    
-    
     t = datetime(2020,i,01,01,00,00):minutes(60):datetime(2020,i,01)+hours(168);
     plot(t, chargeMax, 'color', 'r','LineWidth',2)
     hold on
@@ -105,6 +103,7 @@ end
 temp = 0;
 ricavo_annuale = 0;
 acquisto_annuale = 0;
+guadagno = 0;
 for m = 1:12
     for g = 1:length(Pl(m).month)
         for z = 1:24
@@ -138,8 +137,6 @@ for i = [2 5 10]
         end
         in = in + 1;
     end
-    
-    
     
     
     t = datetime(2020,i,01,01,00,00):minutes(60):datetime(2020,i,01)+hours(168);

@@ -1,7 +1,7 @@
 function d = MyFitnessFunctionGridPlusAnnoLimit(x)
 %caricare le batterie appena possibile
 % 
-    [P_load, P_pv, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init] = parameter_pass();
+    [P_load, P_pv, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init,  fasce_orarie_2020, prezzo_vendita_energia_elettrica] = parameter_pass();
     up = 1.2;
     down = 0.8;
     delta_t = 1;
@@ -18,6 +18,7 @@ function d = MyFitnessFunctionGridPlusAnnoLimit(x)
     E_bat(1:24) = 0;
     E_grid(1:24) = 0;
     d = 0;
+    a = 0;
 %     NVV = 0;
     
     for k = 1 : 12
@@ -34,7 +35,7 @@ function d = MyFitnessFunctionGridPlusAnnoLimit(x)
                 if (i > 8 && i < 19)
                     if Energy > 0
                         if (carica_scarica_ora * x(2) * Round_trip_efficiency) < Energy
-                            if charge_var - carica_scarica_ora * x(2) * Round_trip_efficiency >= charge_min
+                            if (charge_var - carica_scarica_ora * x(2) * Round_trip_efficiency) >= charge_min
                                 E_bat(i) = - carica_scarica_ora * x(2) * Round_trip_efficiency; %scarico batt
                                 E_grid(i) = - E_bat(i) - Energy;
                                 charge_var = charge_var + E_bat(i);
@@ -125,6 +126,9 @@ function d = MyFitnessFunctionGridPlusAnnoLimit(x)
                     NVV = NVV + 1;
                 end
             end
+            costo_matrice(j + a, :) = Costo ;
+            
+            
             if charge_var < limite_inf
                 NVV = NVV + 1;
             end
@@ -141,14 +145,53 @@ function d = MyFitnessFunctionGridPlusAnnoLimit(x)
 
 
                 delta_E = (E_pv + E_bat + E_grid) - E_load;
-%                 d = d + sqrt(sum(delta_E.^2)) * NVV;
 
-
-            
 
                 d = d + sqrt(sum(delta_E.^2)) * fattore_moltiplicativo;
+                
+        end
+        a = a + length(P_load(k).month);
+    end
+    
+    temp = 0;
+    ricavo_annuale = 0;
+    acquisto_annuale = 0;
+    
+    NVV = 0;
+    fattore_moltiplicativo = 1;
+    for m = 1:12
+        for g = 1:length(P_load(m).month)
+            for z = 1:24
+                if costo_matrice(g + temp, z) > 0
+                    guadagno(g + temp, z) = costo_matrice(g + temp, z)* prezzo_vendita_energia_elettrica;
+                    ricavo_annuale = ricavo_annuale + guadagno(g + temp, z);
+                else
+                    guadagno(g + temp, z) = costo_matrice(g + temp, z)* fasce_orarie_2020(m).month(g,z);
+                    acquisto_annuale = acquisto_annuale + guadagno(g + temp, z);
+                end
+                
+            end
+        end
+        temp = temp + length(P_load(m).month);
+        
+    end
+    
+    if ricavo_annuale + acquisto_annuale > 0
+        
+    else
+        NVV = NVV + 1;
+    end
+    
+   
+    if NVV == 0
+        fattore_moltiplicativo = 0.1;
+    else
+        for i=1:NVV
+            fattore_moltiplicativo = fattore_moltiplicativo * 10;
+            
         end
     end
-%     d = NVV;
+     d = d * fattore_moltiplicativo;
+
     %disp(['distance:'  int2str(d) ' , ' int2str(x(1)) ' - ' int2str(x(2))])
 end
