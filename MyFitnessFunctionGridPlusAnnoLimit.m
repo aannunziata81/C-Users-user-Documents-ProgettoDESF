@@ -177,7 +177,7 @@ function d = MyFitnessFunctionGridPlusAnnoLimit(x)
         
     end
     
-    if ricavo_annuale + acquisto_annuale > 1000
+    if (ricavo_annuale + acquisto_annuale) > 1000 
         
     else
         NVV = NVV + 1;

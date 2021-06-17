@@ -2,9 +2,7 @@ function d = MyFitnessFunctionWind(x)
 %caricare le batterie appena possibile
 % 
     [P_load, P_pv, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init,  fasce_orarie_2020, prezzo_vendita_energia_elettrica, P_wind] = parameter_pass();
-    x(1)=684;
-    x(2)=136;
-    x(3)=53;
+    
     up = 1.2;
     down = 0.8;
     delta_t = 1;
