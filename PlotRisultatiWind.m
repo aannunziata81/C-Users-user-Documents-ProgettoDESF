@@ -1,8 +1,8 @@
 [Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init, fasce_orarie_2020, prezzo_vendita_energia_elettrica] = parameter_pass();
 
-Npv = 464;
-Nb = 148;
-Np = 60;
+Npv = 684;
+Nb = 136;
+Np = 53;
 deltat = 1;
 [E_carico, E_pannellifoto, E_batteria, E_grid, d, Costo, andamento_charge, E_wind] = MyFitnessFunctionGridPlusAnnoLimitWindS(Npv, Nb, Np);
 

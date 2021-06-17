@@ -14,7 +14,7 @@ function d = MyFitnessFunctionGridPlusAnnoLimit(x)
 
     charge_var = charge_init;
     andamento_charge(1:24) = 0;
-    Costo(1:24) = 0;%kW
+    
     E_bat(1:24) = 0;
     E_grid(1:24) = 0;
     d = 0;
@@ -24,6 +24,7 @@ function d = MyFitnessFunctionGridPlusAnnoLimit(x)
     for k = 1 : 12
  
         for j = 1 : length(P_load(k).month)
+            Costo(1:24) = 0;%kW
             NVV = 0;
             E_load = P_load(k).month(j,:) * delta_t;
             E_pv = P_pv(k).month(j,:) * x(1) * delta_t;
@@ -176,7 +177,7 @@ function d = MyFitnessFunctionGridPlusAnnoLimit(x)
         
     end
     
-    if ricavo_annuale + acquisto_annuale > 0
+    if ricavo_annuale + acquisto_annuale > 1000
         
     else
         NVV = NVV + 1;

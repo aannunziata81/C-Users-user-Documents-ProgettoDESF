@@ -1,5 +1,6 @@
 function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge, E_wind] = MyFitnessFunctionGridPlusAnnoLimitWindS(x1, x2, x3)
     [P_load, P_pv, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init, prezzifasce, prezzovendita, P_wind] = parameter_pass();
+        
     up = 1.2;
     down = 0.8;
     delta_t = 1;
@@ -40,7 +41,7 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge, E_wind] = MyF
                 if (i > 8 && i < 19)
                     if Energy > 0
                         if (carica_scarica_ora * x2 * Round_trip_efficiency) < Energy
-                            if charge_var - carica_scarica_ora * x2 * Round_trip_efficiency >= charge_min
+                            if (charge_var - carica_scarica_ora * x2 * Round_trip_efficiency) >= charge_min
                                 E_bat(row_accumulate + j,i) = - carica_scarica_ora * x2 * Round_trip_efficiency; %scarico batt
                                 E_grid(row_accumulate + j,i) = - E_bat(row_accumulate + j,i) - Energy;
                                 charge_var = charge_var + E_bat(row_accumulate + j,i);
@@ -52,7 +53,7 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge, E_wind] = MyF
                                 Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i); %negativo, compro tutto
                             end
                         else
-                            if charge_var - Energy >= charge_min
+                            if (charge_var - Energy) >= charge_min
                                 E_bat(row_accumulate + j,i) = - Energy; %prengo dalla batteria
                                 charge_var = charge_var + E_bat(row_accumulate + j,i);
                                 andamento_charge(row_accumulate + j,i) = charge_var;
@@ -69,7 +70,7 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge, E_wind] = MyF
                             Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i);
                             andamento_charge(row_accumulate + j,i) = charge_var;
                         else
-                            if charge_var - Energy <= charge_max
+                            if (charge_var - Energy) <= charge_max
                                 E_bat(row_accumulate + j,i) = - Energy;
                                 charge_var = charge_var + E_bat(row_accumulate + j,i);
                                 andamento_charge(row_accumulate + j,i) = charge_var;
@@ -84,7 +85,7 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge, E_wind] = MyF
                     end
                 else
                     if Energy > 0
-                        if carica_scarica_ora * x2 + charge_var <= charge_max
+                        if (carica_scarica_ora * x2 + charge_var) <= charge_max
                             E_bat(row_accumulate + j,i) = carica_scarica_ora * x2; %carico
                             E_grid(row_accumulate + j,i) = - Energy;%prendo dalla rete
                             Costo(row_accumulate + j,i) = E_grid(row_accumulate + j,i) - E_bat(row_accumulate + j,i);
@@ -99,7 +100,7 @@ function [E_load, E_pv, E_bat, E_grid, d, Costo, andamento_charge, E_wind] = MyF
                         
                     elseif Energy < 0 %eccesso di carica
                         if (carica_scarica_ora * x2) < - Energy
-                            if carica_scarica_ora * x2 + charge_var <= charge_max
+                            if (carica_scarica_ora * x2 + charge_var) <= charge_max
                                 %di notte
                                 E_bat(row_accumulate + j,i) = carica_scarica_ora * x2;
                                 E_grid(row_accumulate + j,i) = - Energy - E_bat(row_accumulate + j,i);%residuo

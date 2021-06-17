@@ -1,7 +1,7 @@
 
 [Pl, Pp, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init, fasce_orarie_2020, prezzo_vendita_energia_elettrica] = parameter_pass();
 
-Npv = 2035;
+Npv = 2086;
 Nb = 19;
 deltat = 1;
 [E_carico, E_pannellifoto, E_batteria, E_grid, d, Costo, andamento_charge] = MyFitnessFunctionGridPlusAnnoLimitS(Npv, Nb);
@@ -139,8 +139,6 @@ for i = [2 5 10]
         end
         in = in + 1;
     end
-    
-    
     
     
     t = datetime(2020,i,01,01,00,00):minutes(60):datetime(2020,i,01)+hours(168);

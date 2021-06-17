@@ -1,10 +1,10 @@
 function d = MyFitnessFunctionWind(x)
 %caricare le batterie appena possibile
 % 
-    x(1) = 464;
-    x(2) = 148;
-    x(3) = 60;
     [P_load, P_pv, capacita_batteria, Round_trip_efficiency, carica_scarica_ora, SOC_M, SOC_m, SOC_init,  fasce_orarie_2020, prezzo_vendita_energia_elettrica, P_wind] = parameter_pass();
+    x(1)=684;
+    x(2)=136;
+    x(3)=53;
     up = 1.2;
     down = 0.8;
     delta_t = 1;
@@ -17,7 +17,7 @@ function d = MyFitnessFunctionWind(x)
     
     charge_var = charge_init;
     andamento_charge(1:24) = 0;
-    Costo(1:24) = 0;%kW
+    
     E_bat(1:24) = 0;
     E_grid(1:24) = 0;
     d = 0;
@@ -27,12 +27,14 @@ function d = MyFitnessFunctionWind(x)
     for k = 1 : 12
  
         for j = 1 : length(P_load(k).month)
+            Costo(1:24) = 0;%kW
             NVV = 0;
             E_load = P_load(k).month(j,:) * delta_t;
             E_pv = P_pv(k).month(j,:) * x(1) * delta_t;
             E_wind = P_wind(j + delay, :).*x(3)*delta_t;
             fattore_moltiplicativo = 1;
             for i = 1 : 24
+                
                 Energy = E_load(i) - E_pv(i) - E_wind(i);
                 %energy positiva: ho bisogno di carica
                 %energy negativa: ho un eccesso di carica
@@ -68,7 +70,7 @@ function d = MyFitnessFunctionWind(x)
                             Costo(i) = E_grid(i);
                             andamento_charge(i) = charge_var;
                         else
-                            if charge_var - Energy <= charge_max
+                            if (charge_var - Energy) <= charge_max
                                 E_bat(i) = - Energy;
                                 charge_var = charge_var + E_bat(i);
                                 andamento_charge(i) = charge_var;

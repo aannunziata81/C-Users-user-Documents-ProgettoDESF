@@ -235,54 +235,56 @@ title('Andamento della funzione di costo')
 grid on;
 figure;
 subplot(2, 1, 1)
-plot(out.pannelli,'*', 'color', 'r');
+plot(out.pannelli, 'color', 'r');
 xlabel('Iterazioni');
 ylabel('Unità');
 title('Andamento del numero di pannelli')
+grid on;
 subplot(2, 1, 2)
-plot(out.batterie,'*', 'color', 'b');
+plot(out.batterie, 'color', 'b');
 xlabel('Iterazioni');
 ylabel('Unità');
 title('Andamento del numero di batterie')
+grid on;
 
 
 %----------------------Pale eoliche-------------------------
 %Aeolos-V wind turbine 10kW 
 %13.000 €
 
-file_vento = load('Eolico');
-global P_wind
-P_wind = file_vento.Potenza_eolico;
-
-% Problem Definition ---RunGAs
-clear problem out
-problem.ObjectiveFunction = @(x) MyFitnessFunctionWind(x);
-problem.nVar = 3;
-problem.VarMin = [1 1 1];
-problem.VarMax = [4000 200 200];
-out = RunGAs(problem, params);
-
-figure(12)
-plot(out.bestcost,'LineWidth', 2);
-xlabel('Iterations');
-ylabel('Best Cost');
-title('Andamento della funzione di costo')
-grid on;
-figure(13);
-subplot(3, 1, 1)
-plot(out.pannelli,'*', 'color', 'r');
-xlabel('Iterazioni');
-ylabel('Unità');
-title('Andamento del numero di pannelli')
-subplot(3, 1, 2)
-plot(out.batterie,'*', 'color', 'b');
-xlabel('Iterazioni');
-ylabel('Unità');
-title('Andamento del numero di batterie')
-subplot(3, 1, 3)
-plot(out.pale,'*', 'color', 'g');
-xlabel('Iterazioni');
-ylabel('Unità');
-title('Andamento del numero di pale eoliche')
-
-
+% file_vento = load('Eolico');
+% global P_wind
+% P_wind = file_vento.Potenza_eolico;
+% 
+% % Problem Definition ---RunGAs
+% clear problem out
+% problem.ObjectiveFunction = @(x) MyFitnessFunctionWind(x);
+% problem.nVar = 3;
+% problem.VarMin = [1 1 1];
+% problem.VarMax = [4000 200 200];
+% out = RunGAs(problem, params);
+% 
+% figure(12)
+% plot(out.bestcost,'LineWidth', 2);
+% xlabel('Iterations');
+% ylabel('Best Cost');
+% title('Andamento della funzione di costo')
+% grid on;
+% figure(13);
+% subplot(3, 1, 1)
+% plot(out.pannelli,'*', 'color', 'r');
+% xlabel('Iterazioni');
+% ylabel('Unità');
+% title('Andamento del numero di pannelli')
+% subplot(3, 1, 2)
+% plot(out.batterie,'*', 'color', 'b');
+% xlabel('Iterazioni');
+% ylabel('Unità');
+% title('Andamento del numero di batterie')
+% subplot(3, 1, 3)
+% plot(out.pale,'*', 'color', 'g');
+% xlabel('Iterazioni');
+% ylabel('Unità');
+% title('Andamento del numero di pale eoliche')
+% 
+% 
